@@ -3,10 +3,14 @@
 
 # Softwares being used: Django PostgreSQL
 
+# Extra details
+1. At any time, only one hackathon will be active.
+
 ## To-Do Items:
 1. User and Admin accounts with JWT authentication using a {length of hackathon} lifetime.
 2. Admin should have the functionality to edit/add/remove questions.
 3. Admin show have the ability to add/edit/remove sample input and output similar to hackerrank.
 4. Admin should be able to reset the database to a clean state for the next hackathon.
 5. Ability for the user to test their code with 3 test input and output (Backend part is to just store these?)
-6. Store all the data sent by any user to keep accurate data tracking (and data saving for redundancy)
+6. Each participant is part of a team, and the score is tabulated for the whole team. The score is based on the time spent till submission of the code.
+7. Store all the data sent by any user to keep accurate data tracking (and data saving for redundancy)
