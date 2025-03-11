@@ -8,7 +8,7 @@
 2. The entire team will have the same login. Before the hackathon begins, they will be allowed to login and enter what name they will be using.
 
 ## To-Do Items:
-1. User and Admin accounts with JWT authentication using a {length of hackathon} lifetime.
+1. User and Admin accounts with JWT authentication using a {length of hackathon} lifetime. [DONE]
 NOTE: the user account is just the team account. The jwt token sent to the user will contain the TeamMember instance of the participant which will be used for storage of information.
 2. Admin should have the functionality to edit/add/remove questions.
 3. Admin show have the ability to add/edit/remove sample input and output similar to hackerrank.
