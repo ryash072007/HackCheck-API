@@ -28,15 +28,7 @@ class TeamRegistration(APIView):
             return Response({
                 'error': 'Team name already taken'
             }, status=status.HTTP_400_BAD_REQUEST)
-            
-        # Validate password
-        try:
-            validate_password(password)
-        except ValidationError as e:
-            return Response({
-                'error': f"Password validation failed: {', '.join(e.messages)}"
-            }, status=status.HTTP_400_BAD_REQUEST)
-            
+                        
         # Create account and team profile in a transaction
         try:
             with transaction.atomic():
