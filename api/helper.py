@@ -49,4 +49,5 @@ def name_similarity(name1, name2, threshold=0.8):
         
     similarity = 1 - (distance / max_len)
     
+    print(f"Similarity between '{name1}' and '{name2}': {similarity}")
     return similarity >= threshold
