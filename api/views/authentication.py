@@ -31,7 +31,11 @@ class TeamSignIn(APIView):
         
         team = TeamProfile.objects.get(account=account)
 
-        if team.participants_registered >= int(environ.get('MAX_TEAM_SIZE', 4)):
+        # Check if the participant name already exists in this team
+        existing = TeamMember.objects.filter(team=team, name=participant_name).exists()
+        
+        # Check team size limit if this is a new participant
+        if not existing and team.participants_registered >= int(environ.get('MAX_TEAM_SIZE', 4)):
             return Response({'error': 'Team is full'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Create or get TeamMember
