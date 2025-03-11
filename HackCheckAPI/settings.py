@@ -55,7 +55,7 @@ MIDDLEWARE = [
 ]
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=environ.get("HACKATHON_DURATION")),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=int(environ.get("HACKATHON_DURATION"))),
 }
 
 ROOT_URLCONF = 'HackCheckAPI.urls'
@@ -130,3 +130,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Add this to your settings.py
+AUTH_USER_MODEL = 'db.Account'  # app_name.model_name
