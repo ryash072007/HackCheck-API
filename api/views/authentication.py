@@ -8,9 +8,22 @@ from os import environ
 
 class TeamSignIn(APIView):
     """
-    Team login view.
-    Returns team name, score, and a JWT access token.
-
+    Team login view for participant authentication.
+    
+    Validates team credentials, manages participant registration within team size limits,
+    and issues JWT tokens with team and participant information.
+    
+    Request format:
+    - team_name: Team's username
+    - password: Team's password
+    - participant_name: Name of the participant logging in
+    
+    Returns:
+    - team_name: Name of the team
+    - score: Current team score
+    - participant_name: Name of the authenticated participant
+    - token: JWT access token containing team and participant details
+    
     Created by Yash Raj at 8:24PM on 11/03/2025
     """
     def post(self, request):
@@ -52,11 +65,11 @@ class TeamSignIn(APIView):
         # Generate token with participant info
         token = RefreshToken.for_user(account)
         
-        # Add custom claims to the access token
-        token.access_token['team_id'] = team.id
-        token.access_token['team_name'] = team.team_name
-        token.access_token['participant_id'] = team_member.id
-        token.access_token['participant_name'] = team_member.name
+        # Add custom claims directly to the token
+        token['team_id'] = team.id
+        token['team_name'] = team.team_name
+        token['participant_id'] = team_member.id
+        token['participant_name'] = team_member.name
         
         return Response({
             'team_name': team.team_name,
