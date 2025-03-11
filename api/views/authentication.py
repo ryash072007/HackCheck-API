@@ -9,6 +9,11 @@ from db.models import Account, TeamProfile, TeamMember
 class TeamSignIn(APIView):
     """
     Team login view.
+    Returns team name, score, and a JWT access token.
+
+    Waiting for: do we ask the team participant to provide his/her name aswell?
+
+    Created by Yash Raj at 8:24PM on 11/03/2025
     """
     def post(self, request):
         team_name = request.data.get('team_name')

@@ -16,3 +16,6 @@ NOTE: the user account is just the team account. The jwt token sent to the user 
 5. Ability for the user to test their code with 3 test input and output (Backend part is to just store these?)
 6. Each participant is part of a team, and the score is tabulated for the whole team. The score is based on the time spent till submission of the code.
 7. Store all the data sent by any user to keep accurate data tracking (and data saving for redundancy)
+
+## Useful tools:
+1. [SQL Browser](https://sqlitebrowser.org/dl/)
