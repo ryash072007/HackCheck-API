@@ -142,6 +142,6 @@ AUTH_USER_MODEL = 'db.Account'  # app_name.model_name
 # Add REST Framework settings
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'api.authentication.TeamParticipantAuthentication',
     ),
 }
