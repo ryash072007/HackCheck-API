@@ -5,6 +5,9 @@ class Account(AbstractUser):
     """
     Base authentication model for both admins and teams.
     Teams will share a single account.
+    
+    Note: password field is inherited from AbstractUser, no need to define it explicitly.
+    Authentication is handled at the Account level, not the TeamProfile level.
     """
     is_admin = models.BooleanField(default=False)
     # No need for a is_team flag - anything that's not an admin is a team account
