@@ -1,1 +1,1 @@
-from views.authentication import *
+from .authentication import *

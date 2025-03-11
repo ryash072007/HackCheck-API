@@ -1,3 +1,3 @@
-from urls.authentication import urlpatterns as authentication_urlpatterns
+from .authentication import urlpatterns as authentication_urlpatterns
 
 urlpatterns = [*authentication_urlpatterns]
