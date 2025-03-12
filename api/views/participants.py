@@ -5,6 +5,7 @@ from rest_framework import status
 from api.helper import extract_info_from_jwt
 from db.models.question import Answer, Question
 from db.models.user import TeamMember
+from db.models import HackathonSettings
 
 
 class SubmitAnswer(APIView):
@@ -21,6 +22,18 @@ class SubmitAnswer(APIView):
         """
         Submit answer for a question in a quiz.
         """
+
+        hackathon_settings = HackathonSettings.get_instance()
+        if not hackathon_settings.has_started:
+            return Response(
+                {"error": "Hackathon has not started yet."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if hackathon_settings.has_ended:
+            return Response(
+                {"error": "Hackathon has ended."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         is_correct_answer = request.data.get("is_correct_answer", False)
         code = request.data.get("code", None)
