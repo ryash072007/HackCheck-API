@@ -37,7 +37,7 @@ class Answer(models.Model):
     is_correct_answer = models.BooleanField(default=False)
     score = models.IntegerField(default=0)
     time_submitted = models.TimeField(auto_now_add=True)
-    team = models.ForeignKey(TeamMember, on_delete=models.CASCADE, related_name='answers')
+    team_member = models.ForeignKey(TeamMember, on_delete=models.CASCADE, related_name='answers')
     
     def __str__(self):
-        return self.answer_code
+        return f"{self.question.number} - {self.team_member.team.team_name} - {self.time_submitted}"
