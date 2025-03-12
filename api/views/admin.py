@@ -65,3 +65,46 @@ class ResetHackathon(APIView):
             return Response({
                 "error": f"An error occurred while resetting the database: {str(e)}"
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class DeleteTeam(APIView):
+    """
+    Admin endpoint to delete a team by its ID.
+    
+    Requires admin authentication.
+    """
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request):
+        if not request.user.is_admin:
+            return Response(
+                {"error": "You don't have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        team_id = request.data.get("team_id")
+        if not team_id:
+            return Response(
+                {"error": "Missing 'team_id' in request body."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            with transaction.atomic():
+                team = TeamProfile.objects.get(id=team_id)
+                team.delete()
+                
+                return Response({
+                    "message": f"Team {team_id} successfully deleted."
+                }, status=status.HTTP_200_OK)
+                
+        except TeamProfile.DoesNotExist:
+            return Response(
+                {"error": f"Team {team_id} does not exist."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+            
+        except Exception as e:
+            return Response(
+                {"error": f"An error occurred while deleting team {team_id}: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+           )
