@@ -194,10 +194,21 @@ class ChangeTimeLeft(APIView):
             )
         
         hackathon_settings = HackathonSettings.get_instance()
-        hackathon_settings.duration = time_left
+
+        current_time = datetime.now()
+        time_started = hackathon_settings.time_started
+        if time_started.tzinfo is not None:
+            time_started = time_started.replace(tzinfo=None)
+        if hackathon_settings.is_paused:
+            current_time = hackathon_settings.time_paused
+            if current_time.tzinfo is not None:
+                current_time = current_time.replace(tzinfo=None)
+        actual_time_left = hackathon_settings.duration - (current_time - time_started - hackathon_settings.time_spent_paused)
+
+        hackathon_settings.time_spent_paused -= actual_time_left - time_left
         hackathon_settings.save()
 
         return Response(
-            {"message": f"Time left changed successfully to {hackathon_settings.duration}"},
+            {"message": f"Time left changed successfully to {time_left}"},
             status=status.HTTP_200_OK,
         )
