@@ -77,3 +77,39 @@ class TeamSignIn(APIView):
             'participant_name': team_member.name,
             'token': str(token.access_token),
         })
+
+class AdminSignIn(APIView):
+    """
+    Admin login view for admin authentication.
+    
+    Validates admin credentials and issues JWT tokens with admin information.
+    
+    Request format:
+    - username: Admin username
+    - password: Admin password
+    
+    Returns:
+    - username: Username of the admin
+    - token: JWT access token containing admin details
+    
+    Created by Yash Raj on 12/03/2025
+    """
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        
+        try:
+            account = Account.objects.get(username=username, is_admin=True)
+        except Account.DoesNotExist:
+            return Response({'error': 'Invalid username'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if not account.check_password(password):
+            return Response({'error': 'wrong password'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Generate token with admin info
+        token = RefreshToken.for_user(account)
+        
+        return Response({
+            'username': account.username,
+            'token': str(token.access_token),
+        })
