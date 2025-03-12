@@ -8,7 +8,7 @@ class Question(models.Model):
     """
     
     title = models.CharField(max_length=300)
-    number = models.IntegerField()
+    number = models.IntegerField(unique=True, null=False, blank=False)
     description = models.TextField()
 
     samples = models.JSONField(null=True, blank=True) # The key is the sample input, the value is the ouput
