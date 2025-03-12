@@ -8,9 +8,12 @@ class HackathonSettings(models.Model):
 
     has_started = models.BooleanField(default=False)
     has_ended = models.BooleanField(default=False)
+    is_paused = models.BooleanField(default=False)
     
     time_started = models.DateTimeField(null=True, blank=True)
     time_ended = models.DateTimeField(null=True, blank=True)
+    time_paused = models.DateTimeField(null=True, blank=True)
+    time_resumed = models.DateTimeField(null=True, blank=True)
     
     class Meta:
         verbose_name_plural = "Hackathon Settings"
