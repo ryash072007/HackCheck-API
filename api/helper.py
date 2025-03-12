@@ -51,3 +51,23 @@ def name_similarity(name1, name2, threshold=0.8):
     
     print(f"Similarity between '{name1}' and '{name2}': {similarity}")
     return similarity >= threshold
+
+def extract_info_from_jwt(request):
+
+    response_data = {
+            'is_authenticated': request.user.is_authenticated,
+            'user_id': request.user.id,
+            'username': request.user.username,
+            'is_admin': False
+        }
+            
+    if hasattr(request, 'participant'):
+        response_data['participant'] = {
+            'id': request.participant.id,
+            'name': request.participant.name,
+            'team_id': request.participant.team_id,
+        }
+    else:
+        response_data['is_admin'] = True
+    
+    return response_data
