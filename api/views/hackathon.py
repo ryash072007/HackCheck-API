@@ -1,4 +1,4 @@
-from datetime import timezone
+from datetime import datetime
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -44,7 +44,7 @@ class StartHackathon(APIView):
         hackathon_settings = HackathonSettings.get_instance()
         hackathon_settings.has_started = True
         hackathon_settings.has_ended = False
-        hackathon_settings.time_started = timezone.now()
+        hackathon_settings.time_started = datetime.now()
         hackathon_settings.save()
 
         return Response(
@@ -65,7 +65,7 @@ class EndHackathon(APIView):
         hackathon_settings = HackathonSettings.get_instance()
         hackathon_settings.has_started = False
         hackathon_settings.has_ended = True
-        hackathon_settings.time_ended = timezone.now()
+        hackathon_settings.time_ended = datetime.now()
         hackathon_settings.save()
 
         return Response(
