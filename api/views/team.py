@@ -55,13 +55,18 @@ class GetAllQuestions(APIView):
         data = []
         for question in questions:
             q_status = None
+            score = 0
             answers = Answer.objects.filter(question=question, team=team)
             if not answers:
                 q_status = 'NOT_ANSWERED'
             else:
                 correct_answers = answers.filter(is_correct_answer=True).exists()
-                q_status = 'CORRECT' if correct_answers else 'INCORRECT'
-            
-            data.append({'question': question.title, 'question_name': question.number, 'question_id': question.id, 'status': q_status})
+                if correct_answers:
+                    q_status = 'CORRECT'
+                    score = answers.filter(is_correct_answer=True).first().score
+                else:
+                    q_status = 'INCORRECT'
+
+            data.append({'question': question.title, 'question_number': question.number, 'question_id': question.id, 'status': q_status, 'score': score})
         
         return Response({'questions': data}, status=status.HTTP_200_OK)  
