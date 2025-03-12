@@ -18,5 +18,20 @@ NOTE: the user account is just the team account. The jwt token sent to the user 
 7. Store all the data sent by any user to keep accurate data tracking (and data saving for redundancy) [DONE]
 8. API to send the participant's code to the database. [DONE]
 
+9. Make a bool that tells if hackathon has started or not -> and then allow participant interaction
+10. Make a request to get points of a particular team / all the teams.
+11. Server-side timing of hackathon
+12. Request to get time left in the hackathon
+13. Endpoint to get all questions / edit questions
+14. Endpoint to get leaderboard - Just team name and points in decreasing order
+15. Ability to pause/reset/edit the time left
+16. Delete teams
+17. 4 Test input and output add to the question
+18. Verify only 4 test in/out are saved for Question and 3 sample in/out when creating the question
+19. Save which tests the user's answer failed
+20. View logs to filter through all the data and see bs (this gonna be ehhh)
+21. Export results
+22. Question status for each team profile: incorrect/pending/correct
+
 ## Useful tools:
 1. [SQL Browser](https://sqlitebrowser.org/dl/)
