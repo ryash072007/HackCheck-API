@@ -32,6 +32,7 @@ NOTE: the user account is just the team account. The jwt token sent to the user 
 20. View logs to filter through all the data and see bs (this gonna be ehhh)
 21. Export results
 22. Question status for each team profile: incorrect/pending/correct
+23. Endpoint to get all the teams and password
 
 ## Useful tools:
 1. [SQL Browser](https://sqlitebrowser.org/dl/)

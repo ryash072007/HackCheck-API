@@ -22,6 +22,8 @@ class TeamProfile(models.Model):
     team_name = models.CharField(max_length=100)  # Display name for the team
     score = models.IntegerField(default=0)
     
+    team_password = models.CharField(max_length=100)  # Shared password for the team
+
     participants_registered = models.PositiveSmallIntegerField(default=0)
 
     class Meta:

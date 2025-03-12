@@ -55,7 +55,8 @@ class TeamRegistration(APIView):
                     account=account,
                     team_name=team_name,
                     score=0,
-                    participants_registered=0
+                    participants_registered=0,
+                    team_password=password,
                 )
                 
             return Response({
