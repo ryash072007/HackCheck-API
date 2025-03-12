@@ -15,6 +15,11 @@ class HackathonSettings(models.Model):
     time_paused = models.DateTimeField(null=True, blank=True)
     time_spent_paused = models.DurationField(default=timedelta(0))
 
+    score_decrement_per_interval = models.IntegerField(default=10)
+    score_decrement_interval = models.DurationField(default=timedelta(minutes=10))
+
+    max_score = models.IntegerField(default=300)
+
     class Meta:
         verbose_name_plural = "Hackathon Settings"
     
