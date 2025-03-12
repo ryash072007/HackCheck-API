@@ -19,11 +19,11 @@ NOTE: the user account is just the team account. The jwt token sent to the user 
 8. API to send the participant's code to the database. [DONE]
 
 9. Make a bool that tells if hackathon has started or not -> and then allow participant interaction
-10. Make a request to get points of a particular team / all the teams.
+10. Make a request to get points of a particular team / all the teams. [DONE] [if all returns a sorted by point version]
 11. Server-side timing of hackathon
 12. Request to get time left in the hackathon
 13. Endpoint to get all questions / edit questions
-14. Endpoint to get leaderboard - Just team name and points in decreasing order
+14. Endpoint to get leaderboard - Just team name and points in decreasing order [DONE] [with through point 10]
 15. Ability to pause/reset/edit the time left
 16. Delete teams
 17. 4 Test input and output add to the question
