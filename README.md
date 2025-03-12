@@ -25,7 +25,7 @@ NOTE: the user account is just the team account. The jwt token sent to the user 
 13. Endpoint to get all questions / edit questions
 14. Endpoint to get leaderboard - Just team name and points in decreasing order [DONE] [with through point 10]
 15. Ability to pause/reset/edit the time left
-16. Delete teams
+16. Delete teams [DONE]
 17. 4 Test input and output add to the question
 18. Verify only 4 test in/out are saved for Question and 3 sample in/out when creating the question
 19. Save which tests the user's answer failed

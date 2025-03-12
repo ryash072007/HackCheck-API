@@ -12,7 +12,8 @@ class Question(models.Model):
     description = models.TextField()
 
     samples = models.JSONField(null=True, blank=True) # The key is the sample input, the value is the ouput
-    
+    tests = models.JSONField(null=True, blank=True) # The key is the test input, the value is the output
+
     def __str__(self):
         return self.title
     
@@ -21,6 +22,13 @@ class Question(models.Model):
         if samples is not None:
             if not isinstance(samples, dict):
                 raise ValidationError("Samples must be a dictionary.")
+            if len(samples) != 3:
+                raise ValidationError("The number of sample inputs has to be 3.")
+        if self.tests is not None:
+            if not isinstance(self.tests, dict):
+                raise ValidationError("Tests must be a dictionary.")
+            if len(self.tests) != 4:
+                raise ValidationError("The number of test inputs has to be 4.")
             
         return super().save(*args, **kwargs)
 
