@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db import models
-from .user import TeamMember
+from .user import TeamMember, TeamProfile
 
 class Question(models.Model):
     """
@@ -46,6 +46,7 @@ class Answer(models.Model):
     score = models.IntegerField(default=0)
     time_submitted = models.DateTimeField(auto_now_add=True)
     team_member = models.ForeignKey(TeamMember, on_delete=models.CASCADE, related_name='answers')
+    team = models.ForeignKey(TeamProfile, on_delete=models.CASCADE, related_name='answers')
     
     def __str__(self):
         return f"{self.question.number} - {self.team_member.team.team_name} - {self.time_submitted}"
