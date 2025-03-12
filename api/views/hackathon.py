@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -50,6 +50,7 @@ class StartHackathon(APIView):
         hackathon_settings.has_started = True
         hackathon_settings.has_ended = False
         hackathon_settings.time_started = datetime.now()
+        hackathon_settings.time_spent_paused = timedelta(0)
         hackathon_settings.save()
 
         return Response(
@@ -167,3 +168,36 @@ class GetTimeLeft(APIView):
             status=status.HTTP_200_OK,
         )
 
+class ChangeTimeLeft(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        if not request.user.is_admin:
+            return Response(
+                {"error": "You don't have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        
+        time_left_seconds = request.data.get('time_left_seconds')
+        if not time_left_seconds:
+            return Response(
+                {"error": "time_left_seconds is required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        try:
+            time_left_seconds = int(time_left_seconds)
+            time_left = timedelta(seconds=time_left_seconds)
+        except (ValueError, TypeError):
+            return Response(
+            {"error": "time_left must be a valid number of seconds."},
+            status=status.HTTP_400_BAD_REQUEST,
+            )
+        
+        hackathon_settings = HackathonSettings.get_instance()
+        hackathon_settings.duration = time_left
+        hackathon_settings.save()
+
+        return Response(
+            {"message": f"Time left changed successfully to {hackathon_settings.duration}"},
+            status=status.HTTP_200_OK,
+        )
