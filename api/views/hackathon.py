@@ -72,3 +72,57 @@ class EndHackathon(APIView):
             {"message": "Hackathon ended successfully."},
             status=status.HTTP_200_OK,
         )
+
+class PauseHackathon(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        if not request.user.is_admin:
+            return Response(
+                {"error": "You don't have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        
+        hackathon_settings = HackathonSettings.get_instance()
+        if hackathon_settings.is_paused:
+            return Response(
+                {"error": "Hackathon is already paused."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        hackathon_settings.is_paused = True
+        hackathon_settings.time_paused = datetime.now()
+        hackathon_settings.save()
+
+        return Response(
+            {"message": "Hackathon paused successfully."},
+            status=status.HTTP_200_OK,
+        )
+
+class ResumeHackathon(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        if not request.user.is_admin:
+            return Response(
+                {"error": "You don't have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        
+        hackathon_settings = HackathonSettings.get_instance()
+        if not hackathon_settings.is_paused:
+            return Response(
+                {"error": "Hackathon is not paused."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        hackathon_settings.is_paused = False
+        current_time = datetime.now()
+        pause_time = hackathon_settings.time_paused
+        if pause_time.tzinfo is not None:
+            pause_time = pause_time.replace(tzinfo=None)
+        hackathon_settings.time_spent_paused += current_time - pause_time
+        hackathon_settings.save()
+
+        return Response(
+            {"message": "Hackathon resumed successfully."},
+            status=status.HTTP_200_OK,
+        )
