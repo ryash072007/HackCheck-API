@@ -29,3 +29,22 @@ class ChangeMaxParticipants(APIView):
             {"message": f"Max participants changed successfully to {hackathon_settings.max_team_size}"},
             status=status.HTTP_200_OK,
         )
+
+class StartHackathon(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        if not request.user.is_admin:
+            return Response(
+                {"error": "You don't have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        
+        hackathon_settings = HackathonSettings.get_instance()
+        hackathon_settings.has_started = True
+        hackathon_settings.save()
+
+        return Response(
+            {"message": "Hackathon started successfully."},
+            status=status.HTTP_200_OK,
+        )
