@@ -14,7 +14,7 @@ NOTE: the user account is just the team account. The jwt token sent to the user 
 3. Admin show have the ability to add/edit/remove sample input and output similar to hackerrank. [DONE] [Just edit the question]
 4. Admin should be able to reset the database to a clean state for the next hackathon. [DONE]
 5. Ability for the user to test their code with 3 test input and output (Backend part is to just store these?) [IF backend end part is to store, then done]
-6. Each participant is part of a team, and the score is tabulated for the whole team. The score is based on the time spent till submission of the code. [except score tabulation, rest is done]
+6. Each participant is part of a team, and the score is tabulated for the whole team. The score is based on the time spent till submission of the code. [DONE]
 7. Store all the data sent by any user to keep accurate data tracking (and data saving for redundancy) [DONE]
 8. API to send the participant's code to the database. [DONE]
 
