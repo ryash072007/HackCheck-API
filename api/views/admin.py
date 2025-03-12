@@ -99,7 +99,9 @@ class DeleteTeam(APIView):
         try:
             with transaction.atomic():
                 team = TeamProfile.objects.get(id=team_id)
+                account = team.account
                 team.delete()
+                account.delete()
 
                 return Response(
                     {"message": f"Team {team_id} successfully deleted."},
