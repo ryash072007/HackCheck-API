@@ -26,3 +26,15 @@ class Question(models.Model):
     class Meta:
         ordering = ['number']
 
+class Answer(models.Model):
+    """
+    Model to store answer sent by participants.
+    """
+    
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='answers')
+    answer_code = models.TextField()
+    is_correct_answer = models.BooleanField(default=False)
+    score = models.IntegerField(default=0)
+    
+    def __str__(self):
+        return self.answer_code
