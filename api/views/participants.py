@@ -53,8 +53,14 @@ class SubmitAnswer(APIView):
             )
 
         question = Question.objects.get(number=question_num)
-        team_member = TeamMember.objects.get(id=request_data["participant"]["id"])
+        # Check if an answer for this question is already marked as correct
+        if Answer.objects.filter(question=question, is_correct_answer=True).exists():
+            return Response(
+            {"error": "This question has already been answered correctly."},
+            status=status.HTTP_400_BAD_REQUEST,
+            )
 
+        team_member = TeamMember.objects.get(id=request_data["participant"]["id"])
 
         answer = Answer.objects.create(
             question=question,
