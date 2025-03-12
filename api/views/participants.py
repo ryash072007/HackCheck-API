@@ -55,18 +55,40 @@ class SubmitAnswer(APIView):
         question = Question.objects.get(number=question_num)
         team_member = TeamMember.objects.get(id=request_data["participant"]["id"])
 
-        print("[IMPLEMENTATION WARNING] SCORE FUNCTION TO BE IMPLEMENTED")
-        score = 0
-        team_member.team.score += score
-        team_member.team.save()
 
-        Answer.objects.create(
+        answer = Answer.objects.create(
             question=question,
             answer_code=code,
             is_correct_answer=is_correct_answer,
-            score=score,
             team_member=team_member,
         )
+
+        if is_correct_answer:
+            time_submitted = answer.time_submitted
+            
+            time_started = hackathon_settings.time_started
+            if time_started.tzinfo is not None:
+                time_started = time_started.replace(tzinfo=None)
+                
+            if time_submitted.tzinfo is not None:
+                time_submitted = time_submitted.replace(tzinfo=None)
+                
+            if hackathon_settings.is_paused:
+                time_submitted = hackathon_settings.time_paused
+                if time_submitted.tzinfo is not None:
+                    time_submitted = time_submitted.replace(tzinfo=None)
+            time_left = hackathon_settings.duration - (time_submitted - time_started - hackathon_settings.time_spent_paused)
+
+            hackathon_time_spent = hackathon_settings.duration - time_left
+            intervals_done = hackathon_time_spent // hackathon_settings.score_decrement_interval
+            score_decrement = hackathon_settings.score_decrement_per_interval * intervals_done
+            score = hackathon_settings.max_score - score_decrement
+
+            answer.score = score
+            answer.save()
+
+            team_member.team.score += score
+            team_member.team.save()
 
         return Response(
             {"message": "Answer submitted successfully."},
