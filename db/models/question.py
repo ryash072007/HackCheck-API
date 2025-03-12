@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db import models
+from db.models.user import TeamMember
 
 class Question(models.Model):
     """
@@ -35,6 +36,8 @@ class Answer(models.Model):
     answer_code = models.TextField()
     is_correct_answer = models.BooleanField(default=False)
     score = models.IntegerField(default=0)
+    time_submitted = models.TimeField(auto_now_add=True)
+    team = models.ForeignKey(TeamMember, on_delete=models.CASCADE, related_name='answers')
     
     def __str__(self):
         return self.answer_code
