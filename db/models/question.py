@@ -16,13 +16,13 @@ class Question(models.Model):
     def __str__(self):
         return self.title
     
-    def save(self, force_insert = ..., force_update = ..., using = ..., update_fields = ...):
+    def save(self, *args, **kwargs):
         samples = self.samples
         if samples is not None:
             if not isinstance(samples, dict):
                 raise ValidationError("Samples must be a dictionary.")
             
-        return super().save(force_insert, force_update, using, update_fields)
+        return super().save(*args, **kwargs)
 
     class Meta:
         ordering = ['number']
