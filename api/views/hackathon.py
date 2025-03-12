@@ -1,3 +1,4 @@
+from datetime import timezone
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -42,9 +43,32 @@ class StartHackathon(APIView):
         
         hackathon_settings = HackathonSettings.get_instance()
         hackathon_settings.has_started = True
+        hackathon_settings.has_ended = False
+        hackathon_settings.time_started = timezone.now()
         hackathon_settings.save()
 
         return Response(
             {"message": "Hackathon started successfully."},
+            status=status.HTTP_200_OK,
+        )
+
+class EndHackathon(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        if not request.user.is_admin:
+            return Response(
+                {"error": "You don't have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        
+        hackathon_settings = HackathonSettings.get_instance()
+        hackathon_settings.has_started = False
+        hackathon_settings.has_ended = True
+        hackathon_settings.time_ended = timezone.now()
+        hackathon_settings.save()
+
+        return Response(
+            {"message": "Hackathon ended successfully."},
             status=status.HTTP_200_OK,
         )
