@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db import models
-from db.models.user import TeamMember
+from .user import TeamMember
 
 class Question(models.Model):
     """
