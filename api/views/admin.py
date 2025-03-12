@@ -255,4 +255,100 @@ class RemoveQuestion(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
+class UpdateQuestion(APIView):
+    """
+    Admin endpoint to update a question by its ID or number.
 
+    Requires admin authentication.
+    """
+    
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        if not request.user.is_admin:
+            return Response(
+                {"error": "You don't have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        
+        question_id = request.data.get("question_id")
+        question_number = request.data.get("question_number")
+        
+        if not question_id and not question_number:
+            return Response(
+                {"error": "Missing 'question_id' or 'question_number' in request body."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+            
+        if question_id and question_number:
+            return Response(
+                {"error": "Provide only one of 'question_id' or 'question_number'."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+            
+        try:
+            if question_number:
+                question = Question.objects.get(number=question_number)
+            else:
+                question = Question.objects.get(id=question_id)
+        except Question.DoesNotExist:
+            return Response(
+                {"error": f"Question does not exist."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+            
+        title = request.data.get("title")
+        description = request.data.get("description")
+        samples = request.data.get("samples")
+        tests = request.data.get("tests")
+        
+        if title is not None:
+            question.title = title
+            
+        if description is not None:
+            question.description = description
+            
+        if samples is not None:
+            if not isinstance(samples, dict):
+                return Response(
+                    {"error": "Samples must be a dictionary."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            if len(samples) != 3:
+                return Response(
+                    {"error": "Samples must have 3 inputs."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            question.samples = samples
+            
+        if tests is not None:
+            if not isinstance(tests, dict):
+                return Response(
+                    {"error": "Tests must be a dictionary."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            if len(tests) != 4:
+                return Response(
+                    {"error": "Tests must have 4 inputs."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            question.tests = tests
+            
+        try:
+            question.save()
+            return Response(
+                {
+                    "message": "Question successfully updated.",
+                    "question": {
+                        "id": question.id, 
+                        "question_number": question.number, 
+                        "title": question.title
+                    },
+                },
+                status=status.HTTP_200_OK,
+            )
+        except Exception as e:
+            return Response(
+                {"error": f"An error occurred while updating the question: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )

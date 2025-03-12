@@ -2,7 +2,7 @@
     "clientName": "Thunder Client",
     "collectionName": "HackCheck",
     "collectionId": "a683d61a-396c-495b-a6cf-90c8beb883f1",
-    "dateExported": "2025-03-12T16:31:54.030Z",
+    "dateExported": "2025-03-12T16:52:31.067Z",
     "version": "1.2",
     "folders": [],
     "requests": [
@@ -188,7 +188,44 @@
                 "type": "bearer",
                 "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQxNzk4MTQ0LCJpYXQiOjE3NDE3ODczNDQsImp0aSI6ImIxYWVlNjA0ODdiMDQ5Y2M5ZTdiYzFhYzZmMWFlZWI5IiwidXNlcl9pZCI6M30.Pf7H1K2PZNBlFfQSAu52PHXy_p3eJgtgIdsBz7VHfX4"
             }
+        },
+        {
+            "_id": "ff4e528a-e986-4817-a530-dee011c9687d",
+            "colId": "a683d61a-396c-495b-a6cf-90c8beb883f1",
+            "containerId": "",
+            "name": "UpdateQuestion",
+            "url": "http://127.0.0.1:8000/update_question/",
+            "method": "POST",
+            "sortNum": 110000,
+            "created": "2025-03-12T16:44:52.387Z",
+            "modified": "2025-03-12T16:47:18.049Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"question_number\": 1,\n  \"title\": \"NEW TITLE\",\n  \"description\": \"NEW DESC\"\n}",
+                "form": []
+            },
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQxNzk4MTQ0LCJpYXQiOjE3NDE3ODczNDQsImp0aSI6ImIxYWVlNjA0ODdiMDQ5Y2M5ZTdiYzFhYzZmMWFlZWI5IiwidXNlcl9pZCI6M30.Pf7H1K2PZNBlFfQSAu52PHXy_p3eJgtgIdsBz7VHfX4"
+            }
+        },
+        {
+            "_id": "5847b453-e42d-48e4-8be1-c88282cf57cb",
+            "colId": "a683d61a-396c-495b-a6cf-90c8beb883f1",
+            "containerId": "",
+            "name": "get_questions",
+            "url": "http://127.0.0.1:8000/get_questions/",
+            "method": "POST",
+            "sortNum": 120000,
+            "created": "2025-03-12T16:50:06.754Z",
+            "modified": "2025-03-12T16:51:29.619Z",
+            "headers": [],
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQxODA5MDgzLCJpYXQiOjE3NDE3OTgyODMsImp0aSI6ImNhYjllMjM3NzkyMjQ2YWViNTczOTNlNTQ4MGJmYTg2IiwidXNlcl9pZCI6M30.Y-K66klqK3ZMv4-gDdI2Yuo0r1JZzT2BctGBGHvmuwA"
+            }
         }
     ],
-    "ref": "iycVd2lYMKQfkKLl6LXtIwfsE3NyBs9yrKHMMxEituFo9B0yJYb6zWvIeeGqoPHG2qb8Jsz7zlR9BvT4jEJmQA"
+    "ref": "iycVd2lYMKQfkKLl6LXtI0s7FGqr-snR78M30VExHMbxSSflMecens--kJOw3EAlIoH_AE4LwlPbdUy6OzjhdA"
 }
