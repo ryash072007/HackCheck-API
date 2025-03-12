@@ -119,7 +119,7 @@ class DeleteTeam(APIView):
             )
 
 
-class AddQueston(APIView):
+class AddQuestion(APIView):
     """
     Admin endpoint to add a new question.
 
@@ -189,7 +189,7 @@ class AddQueston(APIView):
             return Response(
                 {
                     "message": "Question successfully added.",
-                    "question": {"id": question.id, "title": question.title},
+                    "question": {"id": question.id, "question_number": question.number, "title": question.title},
                 },
                 status=status.HTTP_201_CREATED,
             )
@@ -199,3 +199,60 @@ class AddQueston(APIView):
                 {"error": f"An error occurred while adding the question: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+class RemoveQuestion(APIView):
+    """
+    Admin endpoint to remove a question by its ID.
+
+    Requires admin authentication.
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        if not request.user.is_admin:
+            return Response(
+                {"error": "You don't have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        question_id = request.data.get("question_id")
+        question_number = request.data.get("question_number")
+
+        if question_id and question_number:
+            return Response(
+                {"error": "Provide only one of 'question_id' or 'question_number'."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if not question_id and not question_number:
+            return Response(
+                {"error": "Missing 'question_id' or 'question_number' in request body."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if question_number:
+            question_id = Question.objects.filter(number=question_number).values_list('id', flat=True).first()
+
+        try:
+            question = Question.objects.get(id=question_id)
+            question.delete()
+            
+            return Response(
+                {"message": f"Question id {question_id} successfully removed."},
+                status=status.HTTP_200_OK,
+            )
+
+        except Question.DoesNotExist:
+            return Response(
+                {"error": f"Question {question_id} does not exist."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        except Exception as e:
+            return Response(
+                {"error": f"An error occurred while removing question {question_id}: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+
