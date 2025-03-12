@@ -67,6 +67,7 @@ class SubmitAnswer(APIView):
             answer_code=code,
             is_correct_answer=is_correct_answer,
             team_member=team_member,
+            team=team_member.team,
         )
 
         if is_correct_answer:

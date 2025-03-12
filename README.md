@@ -31,7 +31,7 @@ NOTE: the user account is just the team account. The jwt token sent to the user 
 19. Save which tests the user's answer failed
 20. View logs to filter through all the data and see bs (this gonna be ehhh)
 21. Export results
-22. Question status for each team profile: incorrect/pending/correct
+22. Question status for each team profile: CORRECT/INCORRECT/NOT_ANSWERED [DONE] [updated the get_questions endpoint]
 23. Endpoint to get all the teams and password [DONE]
 
 ## Useful tools:
