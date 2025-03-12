@@ -4,6 +4,7 @@ from rest_framework import status
 from db.models import Account, TeamProfile
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
+from rest_framework.permissions import IsAuthenticated
 from django.db import transaction
 
 class TeamRegistration(APIView):
@@ -13,7 +14,17 @@ class TeamRegistration(APIView):
     
     Created by Yash Raj on 11/03/2025
     """
+
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
+
+        if not request.user.is_admin:
+            return Response(
+                {"error": "You don't have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
         team_name = request.data.get('team_name')
         password = request.data.get('password')
         
