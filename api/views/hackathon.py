@@ -126,3 +126,26 @@ class ResumeHackathon(APIView):
             {"message": "Hackathon resumed successfully."},
             status=status.HTTP_200_OK,
         )
+
+class GetTimeLeft(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        hackathon_settings = HackathonSettings.get_instance()
+        if not hackathon_settings.has_started:
+            return Response(
+                {"error": "Hackathon has not started yet."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if hackathon_settings.has_ended:
+            return Response(
+                {"error": "Hackathon has ended."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        
+        current_time = datetime.now()
+        time_left = hackathon_settings.time_duration - (current_time - hackathon_settings.time_started - hackathon_settings.time_spent_paused)
+        return Response(
+            {"time_left": time_left.total_seconds()},
+            status=status.HTTP_200_OK,
+        )
