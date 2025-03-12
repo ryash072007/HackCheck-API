@@ -5,7 +5,7 @@ from db.models.user import TeamProfile
 
 class GetTeamPoints(APIView):
     """"
-    Get points of a team or all teams."
+    Get points of a team or all teams.
     """
     
     def post(self, request):
