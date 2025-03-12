@@ -18,7 +18,7 @@ NOTE: the user account is just the team account. The jwt token sent to the user 
 7. Store all the data sent by any user to keep accurate data tracking (and data saving for redundancy) [DONE]
 8. API to send the participant's code to the database. [DONE]
 
-9. Make a bool that tells if hackathon has started or not -> and then allow participant interaction
+9. Make a bool that tells if hackathon has started or not -> and then allow participant interaction [DONE]
 10. Make a request to get points of a particular team / all the teams. [DONE] [if all returns a sorted by point version]
 11. Server-side timing of hackathon
 12. Request to get time left in the hackathon
