@@ -352,3 +352,24 @@ class UpdateQuestion(APIView):
                 {"error": f"An error occurred while updating the question: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+class GetTeams(APIView):
+    """
+    Admin endpoint to get all team profiles.
+
+    Requires admin authentication.
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        if not request.user.is_admin:
+            return Response(
+                {"error": "You don't have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        teams = TeamProfile.objects.all()
+        team_data = [{"id": team.id, "name": team.team_name, "password": team.team_password} for team in teams]
+
+        return Response({"teams": team_data}, status=status.HTTP_200_OK)
