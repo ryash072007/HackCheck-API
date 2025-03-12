@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from db.models import Account, TeamProfile, TeamMember
+from db.models import Account, TeamProfile, TeamMember, HackathonSettings
 from os import environ
 
 class TeamSignIn(APIView):
@@ -47,8 +47,12 @@ class TeamSignIn(APIView):
         # Check if the participant name already exists in this team
         existing = TeamMember.objects.filter(team=team, name=participant_name).exists()
         
+        hackathon_settings = HackathonSettings.get_instance()
+        if not hackathon_settings.has_started:
+            return Response({'error': 'Hackathon has not started yet'}, status=status.HTTP_400_BAD_REQUEST)
+
         # Check team size limit if this is a new participant
-        if not existing and team.participants_registered >= int(environ.get('MAX_TEAM_SIZE', 4)):
+        if not existing and team.participants_registered >= hackathon_settings.max_team_size:
             return Response({'error': 'Team is full'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Create or get TeamMember

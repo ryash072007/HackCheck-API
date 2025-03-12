@@ -2,7 +2,7 @@
     "clientName": "Thunder Client",
     "collectionName": "HackCheck",
     "collectionId": "a683d61a-396c-495b-a6cf-90c8beb883f1",
-    "dateExported": "2025-03-12T16:52:31.067Z",
+    "dateExported": "2025-03-12T18:16:52.344Z",
     "version": "1.2",
     "folders": [],
     "requests": [
@@ -225,7 +225,28 @@
                 "type": "bearer",
                 "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQxODA5MDgzLCJpYXQiOjE3NDE3OTgyODMsImp0aSI6ImNhYjllMjM3NzkyMjQ2YWViNTczOTNlNTQ4MGJmYTg2IiwidXNlcl9pZCI6M30.Y-K66klqK3ZMv4-gDdI2Yuo0r1JZzT2BctGBGHvmuwA"
             }
+        },
+        {
+            "_id": "de5e6436-743f-4699-8cd8-feaa8ba5d567",
+            "colId": "a683d61a-396c-495b-a6cf-90c8beb883f1",
+            "containerId": "",
+            "name": "change_max_participants",
+            "url": "http://127.0.0.1:8000/change_max_participants/",
+            "method": "POST",
+            "sortNum": 130000,
+            "created": "2025-03-12T18:15:34.429Z",
+            "modified": "2025-03-12T18:16:09.868Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"max_participants\": 4\n}",
+                "form": []
+            },
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQxODA5MDgzLCJpYXQiOjE3NDE3OTgyODMsImp0aSI6ImNhYjllMjM3NzkyMjQ2YWViNTczOTNlNTQ4MGJmYTg2IiwidXNlcl9pZCI6M30.Y-K66klqK3ZMv4-gDdI2Yuo0r1JZzT2BctGBGHvmuwA"
+            }
         }
     ],
-    "ref": "iycVd2lYMKQfkKLl6LXtI0s7FGqr-snR78M30VExHMbxSSflMecens--kJOw3EAlIoH_AE4LwlPbdUy6OzjhdA"
+    "ref": "iycVd2lYMKQfkKLl6LXtI4j9luADfnQiedISQEa0b7PjzqG5OyDaNamGW_LZ74fb_7ShnCi4unItawG38W3q0A"
 }
