@@ -42,6 +42,11 @@ class StartHackathon(APIView):
             )
         
         hackathon_settings = HackathonSettings.get_instance()
+        if hackathon_settings.has_started:
+            return Response(
+                {"error": "Hackathon has already started."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         hackathon_settings.has_started = True
         hackathon_settings.has_ended = False
         hackathon_settings.time_started = datetime.now()
@@ -63,6 +68,11 @@ class EndHackathon(APIView):
             )
         
         hackathon_settings = HackathonSettings.get_instance()
+        if hackathon_settings.has_ended:
+            return Response(
+                {"error": "Hackathon has already ended."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         hackathon_settings.has_started = False
         hackathon_settings.has_ended = True
         hackathon_settings.time_ended = datetime.now()
@@ -147,8 +157,13 @@ class GetTimeLeft(APIView):
         time_started = hackathon_settings.time_started
         if time_started.tzinfo is not None:
             time_started = time_started.replace(tzinfo=None)
+        if hackathon_settings.is_paused:
+            current_time = hackathon_settings.time_paused
+            if current_time.tzinfo is not None:
+                current_time = current_time.replace(tzinfo=None)
         time_left = hackathon_settings.duration - (current_time - time_started - hackathon_settings.time_spent_paused)
         return Response(
             {"time_left": time_left.total_seconds()},
             status=status.HTTP_200_OK,
         )
+
