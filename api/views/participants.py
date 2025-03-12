@@ -44,6 +44,8 @@ class SubmitAnswer(APIView):
 
         print("[IMPLEMENTATION WARNING] SCORE FUNCTION TO BE IMPLEMENTED")
         score = 0
+        team_member.team.score += score
+        team_member.team.save()
 
         Answer.objects.create(
             question=question,
