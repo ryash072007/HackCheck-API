@@ -2,8 +2,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from db.models import Question
+from db.models.question import Answer
 from db.models.user import TeamProfile
 from rest_framework.permissions import IsAuthenticated
+from api.helper import extract_info_from_jwt
 
 
 class GetTeamPoints(APIView):
@@ -26,12 +28,40 @@ class GetTeamPoints(APIView):
 
 class GetAllQuestions(APIView):
     """
-    Get all questions.
+    Get the status of all questions for the authenticated user's team.
+    This endpoint returns the status of all questions for the team that the authenticated user belongs to.
+    The status can be one of the following:
+    - 'NOT_ANSWERED': The team has not submitted any answers for the question.
+    - 'CORRECT': The team has submitted a correct answer for the question.
+    - 'INCORRECT': The team has submitted answers for the question, but none are correct.
+    Returns:
+        Response: A JSON object with a 'questions' array containing objects with the following fields:
+            - question (str): The title of the question.
+            - question_name (str): The number/identifier of the question.
+            - status (str): The status of the question ('NOT_ANSWERED', 'CORRECT', or 'INCORRECT').
+
+    Get questions status.
     """
     
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        questions = Question.objects.all()
-        data = [{'id': question.id, 'question': question.title, 'question_name': question.number} for question in questions]
-        return Response({'questions': data}, status=status.HTTP_200_OK)
+        participant_data = extract_info_from_jwt(request)
+        team_id = participant_data['participant']['team_id']
+        team = TeamProfile.objects.get(id=team_id)
+
+        questions = Question.objects.all().order_by('number')
+
+        data = []
+        for question in questions:
+            q_status = None
+            answers = Answer.objects.filter(question=question, team=team)
+            if not answers:
+                q_status = 'NOT_ANSWERED'
+            else:
+                correct_answers = answers.filter(is_correct_answer=True).exists()
+                q_status = 'CORRECT' if correct_answers else 'INCORRECT'
+            
+            data.append({'question': question.title, 'question_name': question.number, 'question_id': question.id, 'status': q_status})
+        
+        return Response({'questions': data}, status=status.HTTP_200_OK)  
