@@ -130,7 +130,7 @@ class ResumeHackathon(APIView):
 class GetTimeLeft(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
+    def post(self, request):
         hackathon_settings = HackathonSettings.get_instance()
         if not hackathon_settings.has_started:
             return Response(
@@ -144,7 +144,10 @@ class GetTimeLeft(APIView):
             )
         
         current_time = datetime.now()
-        time_left = hackathon_settings.time_duration - (current_time - hackathon_settings.time_started - hackathon_settings.time_spent_paused)
+        time_started = hackathon_settings.time_started
+        if time_started.tzinfo is not None:
+            time_started = time_started.replace(tzinfo=None)
+        time_left = hackathon_settings.duration - (current_time - time_started - hackathon_settings.time_spent_paused)
         return Response(
             {"time_left": time_left.total_seconds()},
             status=status.HTTP_200_OK,
