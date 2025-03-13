@@ -48,5 +48,7 @@ class Answer(models.Model):
     team_member = models.ForeignKey(TeamMember, on_delete=models.CASCADE, related_name='answers')
     team = models.ForeignKey(TeamProfile, on_delete=models.CASCADE, related_name='answers')
     
+    test_results = models.JSONField(null=True, blank=True) # The key is the test input, the value is the output
+
     def __str__(self):
         return f"{self.question.number} - {self.team_member.team.team_name} - {self.time_submitted}"
