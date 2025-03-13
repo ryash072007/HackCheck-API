@@ -34,6 +34,7 @@ NOTE: the user account is just the team account. The jwt token sent to the user 
 22. Endpoint to get all the teams and password [DONE]
 23. Admin dashboard for hackathon status, quick stats (num team, num questons, num answer), time left [DONE]
 24. System setting update - point stuff [DONE]
+25. Reset the answer submissions, timer and the points [DONE]
 
 ## Useful tools:
 1. [SQL Browser](https://sqlitebrowser.org/dl/)
