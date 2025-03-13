@@ -62,8 +62,8 @@ class SubmitAnswer(APIView):
         # Check if an answer for this question is already marked as correct
         if Answer.objects.filter(question=question, is_correct_answer=True).exists():
             return Response(
-            {"error": "This question has already been answered correctly."},
-            status=status.HTTP_400_BAD_REQUEST,
+                {"error": "This question has already been answered correctly."},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         team_member = TeamMember.objects.get(id=request_data["participant"]["id"])
@@ -79,23 +79,29 @@ class SubmitAnswer(APIView):
 
         if is_correct_answer:
             time_submitted = answer.time_submitted
-            
+
             time_started = hackathon_settings.time_started
             if time_started.tzinfo is not None:
                 time_started = time_started.replace(tzinfo=None)
-                
+
             if time_submitted.tzinfo is not None:
                 time_submitted = time_submitted.replace(tzinfo=None)
-                
+
             if hackathon_settings.is_paused:
                 time_submitted = hackathon_settings.time_paused
                 if time_submitted.tzinfo is not None:
                     time_submitted = time_submitted.replace(tzinfo=None)
-            time_left = hackathon_settings.duration - (time_submitted - time_started - hackathon_settings.time_spent_paused)
+            time_left = hackathon_settings.duration - (
+                time_submitted - time_started - hackathon_settings.time_spent_paused
+            )
 
             hackathon_time_spent = hackathon_settings.duration - time_left
-            intervals_done = hackathon_time_spent // hackathon_settings.score_decrement_interval
-            score_decrement = hackathon_settings.score_decrement_per_interval * intervals_done
+            intervals_done = (
+                hackathon_time_spent // hackathon_settings.score_decrement_interval
+            )
+            score_decrement = (
+                hackathon_settings.score_decrement_per_interval * intervals_done
+            )
             score = hackathon_settings.max_score - score_decrement
 
             answer.score = score

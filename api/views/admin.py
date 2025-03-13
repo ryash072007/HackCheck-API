@@ -4,7 +4,14 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from django.db import transaction
-from db.models import TeamProfile, TeamMember, Question, Answer, Account, HackathonSettings
+from db.models import (
+    TeamProfile,
+    TeamMember,
+    Question,
+    Answer,
+    Account,
+    HackathonSettings,
+)
 
 
 class ResetHackathonDatabase(APIView):
@@ -153,17 +160,16 @@ class AddQuestion(APIView):
             missing_fields.append("samples")
         if not tests:
             missing_fields.append("tests")
-            
+
         if missing_fields:
             return Response(
-            {
-                "error": f"Missing required fields: {', '.join(missing_fields)}",
-                "missing_fields": missing_fields
-            },
-            status=status.HTTP_400_BAD_REQUEST,
+                {
+                    "error": f"Missing required fields: {', '.join(missing_fields)}",
+                    "missing_fields": missing_fields,
+                },
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
-        
         if not isinstance(samples, dict) or not isinstance(tests, dict):
             return Response(
                 {"error": "Samples and tests must be dictionaries."},
@@ -192,7 +198,11 @@ class AddQuestion(APIView):
             return Response(
                 {
                     "message": "Question successfully added.",
-                    "question": {"id": question.id, "question_number": question.number, "title": question.title},
+                    "question": {
+                        "id": question.id,
+                        "question_number": question.number,
+                        "title": question.title,
+                    },
                 },
                 status=status.HTTP_201_CREATED,
             )
@@ -202,6 +212,7 @@ class AddQuestion(APIView):
                 {"error": f"An error occurred while adding the question: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
 
 class RemoveQuestion(APIView):
     """
@@ -230,17 +241,23 @@ class RemoveQuestion(APIView):
 
         if not question_id and not question_number:
             return Response(
-                {"error": "Missing 'question_id' or 'question_number' in request body."},
+                {
+                    "error": "Missing 'question_id' or 'question_number' in request body."
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         if question_number:
-            question_id = Question.objects.filter(number=question_number).values_list('id', flat=True).first()
+            question_id = (
+                Question.objects.filter(number=question_number)
+                .values_list("id", flat=True)
+                .first()
+            )
 
         try:
             question = Question.objects.get(id=question_id)
             question.delete()
-            
+
             return Response(
                 {"message": f"Question id {question_id} successfully removed."},
                 status=status.HTTP_200_OK,
@@ -254,9 +271,12 @@ class RemoveQuestion(APIView):
 
         except Exception as e:
             return Response(
-                {"error": f"An error occurred while removing question {question_id}: {str(e)}"},
+                {
+                    "error": f"An error occurred while removing question {question_id}: {str(e)}"
+                },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
 
 class UpdateQuestion(APIView):
     """
@@ -264,7 +284,7 @@ class UpdateQuestion(APIView):
 
     Requires admin authentication.
     """
-    
+
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
@@ -273,22 +293,24 @@ class UpdateQuestion(APIView):
                 {"error": "You don't have permission to perform this action."},
                 status=status.HTTP_403_FORBIDDEN,
             )
-        
+
         question_id = request.data.get("question_id")
         question_number = request.data.get("question_number")
-        
+
         if not question_id and not question_number:
             return Response(
-                {"error": "Missing 'question_id' or 'question_number' in request body."},
+                {
+                    "error": "Missing 'question_id' or 'question_number' in request body."
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
-            
+
         if question_id and question_number:
             return Response(
                 {"error": "Provide only one of 'question_id' or 'question_number'."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-            
+
         try:
             if question_number:
                 question = Question.objects.get(number=question_number)
@@ -299,18 +321,18 @@ class UpdateQuestion(APIView):
                 {"error": f"Question does not exist."},
                 status=status.HTTP_404_NOT_FOUND,
             )
-            
+
         title = request.data.get("title")
         description = request.data.get("description")
         samples = request.data.get("samples")
         tests = request.data.get("tests")
-        
+
         if title is not None:
             question.title = title
-            
+
         if description is not None:
             question.description = description
-            
+
         if samples is not None:
             if not isinstance(samples, dict):
                 return Response(
@@ -323,7 +345,7 @@ class UpdateQuestion(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             question.samples = samples
-            
+
         if tests is not None:
             if not isinstance(tests, dict):
                 return Response(
@@ -336,16 +358,16 @@ class UpdateQuestion(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             question.tests = tests
-            
+
         try:
             question.save()
             return Response(
                 {
                     "message": "Question successfully updated.",
                     "question": {
-                        "id": question.id, 
-                        "question_number": question.number, 
-                        "title": question.title
+                        "id": question.id,
+                        "question_number": question.number,
+                        "title": question.title,
                     },
                 },
                 status=status.HTTP_200_OK,
@@ -355,6 +377,7 @@ class UpdateQuestion(APIView):
                 {"error": f"An error occurred while updating the question: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
 
 class GetTeams(APIView):
     """
@@ -373,9 +396,13 @@ class GetTeams(APIView):
             )
 
         teams = TeamProfile.objects.all()
-        team_data = [{"id": team.id, "name": team.team_name, "password": team.team_password} for team in teams]
+        team_data = [
+            {"id": team.id, "name": team.team_name, "password": team.team_password}
+            for team in teams
+        ]
 
         return Response({"teams": team_data}, status=status.HTTP_200_OK)
+
 
 class AdminDashboard(APIView):
     """
@@ -408,7 +435,9 @@ class AdminDashboard(APIView):
             current_time = hackathon_settings.time_paused
             if current_time.tzinfo is not None:
                 current_time = current_time.replace(tzinfo=None)
-        time_left = hackathon_settings.duration - (current_time - time_started - hackathon_settings.time_spent_paused)
+        time_left = hackathon_settings.duration - (
+            current_time - time_started - hackathon_settings.time_spent_paused
+        )
         time_left_seconds = time_left.total_seconds()
 
         return Response(
@@ -421,6 +450,7 @@ class AdminDashboard(APIView):
             },
             status=status.HTTP_200_OK,
         )
+
 
 class GetScoreSettings(APIView):
     """
@@ -447,6 +477,7 @@ class GetScoreSettings(APIView):
 
         return Response(score_settings, status=status.HTTP_200_OK)
 
+
 class UpdateScoreSettings(APIView):
     """
     Admin endpoint to update the score settings for the hackathon.
@@ -464,12 +495,20 @@ class UpdateScoreSettings(APIView):
             )
 
         max_score = request.data.get("max_score")
-        score_decrement_interval_seconds = request.data.get("score_decrement_interval_seconds")
+        score_decrement_interval_seconds = request.data.get(
+            "score_decrement_interval_seconds"
+        )
         score_decrement_per_interval = request.data.get("score_decrement_per_interval")
 
-        if not max_score and not score_decrement_interval_seconds and not score_decrement_per_interval:
+        if (
+            not max_score
+            and not score_decrement_interval_seconds
+            and not score_decrement_per_interval
+        ):
             return Response(
-                {"error": "Provide at least one of 'max_score', 'score_decrement_interval_seconds', or 'score_decrement_per_interval'."},
+                {
+                    "error": "Provide at least one of 'max_score', 'score_decrement_interval_seconds', or 'score_decrement_per_interval'."
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -479,10 +518,14 @@ class UpdateScoreSettings(APIView):
             hackathon_settings.max_score = max_score
 
         if score_decrement_interval_seconds:
-            hackathon_settings.score_decrement_interval = timedelta(seconds=score_decrement_interval_seconds)
+            hackathon_settings.score_decrement_interval = timedelta(
+                seconds=score_decrement_interval_seconds
+            )
 
         if score_decrement_per_interval:
-            hackathon_settings.score_decrement_per_interval = score_decrement_per_interval
+            hackathon_settings.score_decrement_per_interval = (
+                score_decrement_per_interval
+            )
 
         hackathon_settings.save()
 
@@ -490,6 +533,7 @@ class UpdateScoreSettings(APIView):
             {"message": "Score settings successfully updated."},
             status=status.HTTP_200_OK,
         )
+
 
 class ExportLeaderboard(APIView):
     """
@@ -524,13 +568,14 @@ class ExportLeaderboard(APIView):
         ]
 
         response = Response(team_data, status=status.HTTP_200_OK)
-        
+
         with open("leaderboard.csv", "w") as f:
             f.write("Team Name,Score\n")
             for team in team_data:
                 f.write(f"{team['Team Name']},{team['Score']}\n")
 
         return response
+
 
 class ResetCurrentHackathon(APIView):
     """

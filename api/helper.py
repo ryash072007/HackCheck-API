@@ -1,12 +1,12 @@
 def name_similarity(name1, name2, threshold=0.8):
     """
     Compare two names and determine if they are similar.
-    
+
     Args:
         name1 (str): First name to compare
         name2 (str): Second name to compare
         threshold (float): Similarity threshold (default: 0.8 or 80%)
-        
+
     Returns:
         bool: True if similarity is greater than the threshold, False otherwise
 
@@ -15,19 +15,19 @@ def name_similarity(name1, name2, threshold=0.8):
     # Preprocess names - convert to lowercase and strip whitespace
     name1 = name1.lower().strip()
     name2 = name2.lower().strip()
-    
+
     # If names are exactly the same, return True immediately
     if name1 == name2:
         return True
-        
+
     # Calculate Levenshtein distance
     def levenshtein_distance(s1, s2):
         if len(s1) < len(s2):
             return levenshtein_distance(s2, s1)
-        
+
         if len(s2) == 0:
             return len(s1)
-        
+
         previous_row = range(len(s2) + 1)
         for i, c1 in enumerate(s1):
             current_row = [i + 1]
@@ -37,37 +37,38 @@ def name_similarity(name1, name2, threshold=0.8):
                 substitutions = previous_row[j] + (c1 != c2)
                 current_row.append(min(insertions, deletions, substitutions))
             previous_row = current_row
-        
+
         return previous_row[-1]
-    
+
     # Calculate similarity ratio
     distance = levenshtein_distance(name1, name2)
     max_len = max(len(name1), len(name2))
-    
+
     if max_len == 0:  # Both strings are empty
         return True
-        
+
     similarity = 1 - (distance / max_len)
-    
+
     print(f"Similarity between '{name1}' and '{name2}': {similarity}")
     return similarity >= threshold
+
 
 def extract_info_from_jwt(request):
 
     response_data = {
-            'is_authenticated': request.user.is_authenticated,
-            'user_id': request.user.id,
-            'username': request.user.username,
-            'is_admin': False
-        }
-            
-    if hasattr(request, 'participant'):
-        response_data['participant'] = {
-            'id': request.participant.id,
-            'name': request.participant.name,
-            'team_id': request.participant.team_id,
+        "is_authenticated": request.user.is_authenticated,
+        "user_id": request.user.id,
+        "username": request.user.username,
+        "is_admin": False,
+    }
+
+    if hasattr(request, "participant"):
+        response_data["participant"] = {
+            "id": request.participant.id,
+            "name": request.participant.name,
+            "team_id": request.participant.team_id,
         }
     else:
-        response_data['is_admin'] = True
-    
+        response_data["is_admin"] = True
+
     return response_data

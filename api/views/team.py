@@ -9,22 +9,28 @@ from api.helper import extract_info_from_jwt
 
 
 class GetTeamPoints(APIView):
-    """"
+    """ "
     Get points of a team or all teams.
     """
-    
+
     def post(self, request):
-        team_id = request.data.get('team_id', None)
+        team_id = request.data.get("team_id", None)
         if team_id is None or team_id == "ALL":
-            teams = TeamProfile.objects.all().order_by('-score')
-            data = [{'id': team.id, 'team_name': team.team_name, 'score': team.score} for team in teams]
-            return Response({'teams': data}, status=status.HTTP_200_OK)
+            teams = TeamProfile.objects.all().order_by("-score")
+            data = [
+                {"id": team.id, "team_name": team.team_name, "score": team.score}
+                for team in teams
+            ]
+            return Response({"teams": data}, status=status.HTTP_200_OK)
         else:
             try:
                 team = TeamProfile.objects.get(id=team_id)
-                return Response({'score': team.score}, status=status.HTTP_200_OK)
+                return Response({"score": team.score}, status=status.HTTP_200_OK)
             except TeamProfile.DoesNotExist:
-                return Response({'error': 'Team not found'}, status=status.HTTP_404_NOT_FOUND)
+                return Response(
+                    {"error": "Team not found"}, status=status.HTTP_404_NOT_FOUND
+                )
+
 
 class GetAllQuestions(APIView):
     """
@@ -42,15 +48,15 @@ class GetAllQuestions(APIView):
 
     Get questions status.
     """
-    
+
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
         participant_data = extract_info_from_jwt(request)
-        team_id = participant_data['participant']['team_id']
+        team_id = participant_data["participant"]["team_id"]
         team = TeamProfile.objects.get(id=team_id)
 
-        questions = Question.objects.all().order_by('number')
+        questions = Question.objects.all().order_by("number")
 
         data = []
         for question in questions:
@@ -58,15 +64,23 @@ class GetAllQuestions(APIView):
             score = 0
             answers = Answer.objects.filter(question=question, team=team)
             if not answers:
-                q_status = 'NOT_ANSWERED'
+                q_status = "NOT_ANSWERED"
             else:
                 correct_answers = answers.filter(is_correct_answer=True).exists()
                 if correct_answers:
-                    q_status = 'CORRECT'
+                    q_status = "CORRECT"
                     score = answers.filter(is_correct_answer=True).first().score
                 else:
-                    q_status = 'INCORRECT'
+                    q_status = "INCORRECT"
 
-            data.append({'question': question.title, 'question_number': question.number, 'question_id': question.id, 'status': q_status, 'score': score})
-        
-        return Response({'questions': data}, status=status.HTTP_200_OK)  
+            data.append(
+                {
+                    "question": question.title,
+                    "question_number": question.number,
+                    "question_id": question.id,
+                    "status": q_status,
+                    "score": score,
+                }
+            )
+
+        return Response({"questions": data}, status=status.HTTP_200_OK)
