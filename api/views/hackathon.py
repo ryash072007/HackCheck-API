@@ -48,6 +48,7 @@ class StartHackathon(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         hackathon_settings.has_started = True
+        hackathon_settings.is_paused = False
         hackathon_settings.has_ended = False
         hackathon_settings.time_started = datetime.now()
         hackathon_settings.time_spent_paused = timedelta(0)
