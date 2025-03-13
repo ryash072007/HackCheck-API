@@ -38,6 +38,7 @@ class SubmitAnswer(APIView):
         is_correct_answer = request.data.get("is_correct_answer", False)
         code = request.data.get("code", None)
         question_num = request.data.get("question_number", None)
+        tests = request.data.get("tests", None)
 
         request_data = extract_info_from_jwt(request)
 
@@ -49,6 +50,11 @@ class SubmitAnswer(APIView):
         if not question_num:
             return Response(
                 {"error": "Question number is required to submit answer."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if not tests:
+            return Response(
+                {"error": "Tests are required to submit answer."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -68,6 +74,7 @@ class SubmitAnswer(APIView):
             is_correct_answer=is_correct_answer,
             team_member=team_member,
             team=team_member.team,
+            test_results=tests,
         )
 
         if is_correct_answer:

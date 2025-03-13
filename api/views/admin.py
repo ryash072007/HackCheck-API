@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -7,7 +7,7 @@ from django.db import transaction
 from db.models import TeamProfile, TeamMember, Question, Answer, Account, HackathonSettings
 
 
-class ResetHackathon(APIView):
+class ResetHackathonDatabase(APIView):
     """
     Admin endpoint to reset all hackathon data.
     This clears all team profiles, members, questions, answers, and non-admin accounts.
@@ -422,4 +422,112 @@ class AdminDashboard(APIView):
             status=status.HTTP_200_OK,
         )
 
+class GetScoreSettings(APIView):
+    """
+    Admin endpoint to get the score settings for the hackathon.
 
+    Requires admin authentication.
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        if not request.user.is_admin:
+            return Response(
+                {"error": "You don't have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        hackathon_settings = HackathonSettings.get_instance()
+        score_settings = {
+            "max_score": hackathon_settings.max_score,
+            "score_decrement_interval_seconds": hackathon_settings.score_decrement_interval.total_seconds(),
+            "score_decrement_per_interval": hackathon_settings.score_decrement_per_interval,
+        }
+
+        return Response(score_settings, status=status.HTTP_200_OK)
+
+class UpdateScoreSettings(APIView):
+    """
+    Admin endpoint to update the score settings for the hackathon.
+
+    Requires admin authentication.
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        if not request.user.is_admin:
+            return Response(
+                {"error": "You don't have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        max_score = request.data.get("max_score")
+        score_decrement_interval_seconds = request.data.get("score_decrement_interval_seconds")
+        score_decrement_per_interval = request.data.get("score_decrement_per_interval")
+
+        if not max_score and not score_decrement_interval_seconds and not score_decrement_per_interval:
+            return Response(
+                {"error": "Provide at least one of 'max_score', 'score_decrement_interval_seconds', or 'score_decrement_per_interval'."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        hackathon_settings = HackathonSettings.get_instance()
+
+        if max_score:
+            hackathon_settings.max_score = max_score
+
+        if score_decrement_interval_seconds:
+            hackathon_settings.score_decrement_interval = timedelta(seconds=score_decrement_interval_seconds)
+
+        if score_decrement_per_interval:
+            hackathon_settings.score_decrement_per_interval = score_decrement_per_interval
+
+        hackathon_settings.save()
+
+        return Response(
+            {"message": "Score settings successfully updated."},
+            status=status.HTTP_200_OK,
+        )
+
+class ExportLeaderboard(APIView):
+    """
+    Admin endpoint to export the leaderboard as a CSV file.
+
+    Requires admin authentication.
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        if not request.user.is_admin:
+            return Response(
+                {"error": "You don't have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        hackathon_settings = HackathonSettings.get_instance()
+        if not hackathon_settings.has_started:
+            return Response(
+                {"error": "The hackathon has not started yet."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        teams = TeamProfile.objects.all().order_by("-score")
+        team_data = [
+            {
+                "Team Name": team.team_name,
+                "Score": team.score,
+            }
+            for team in teams
+        ]
+
+        response = Response(team_data, status=status.HTTP_200_OK)
+        
+        with open("leaderboard.csv", "w") as f:
+            f.write("Team Name,Score\n")
+            for team in team_data:
+                f.write(f"{team['Team Name']},{team['Score']}\n")
+
+        return response

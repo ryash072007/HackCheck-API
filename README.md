@@ -28,12 +28,12 @@ NOTE: the user account is just the team account. The jwt token sent to the user 
 16. Delete teams [DONE]
 17. 4 Test input and output add to the question [DONE]
 18. Verify only 4 test in/out are saved for Question and 3 sample in/out when creating the question [DONE]
-19. Save which tests the user's answer failed
-20. View logs to filter through all the data and see bs (this gonna be ehhh)
-21. Export results
-22. Question status for each team profile: CORRECT/INCORRECT/NOT_ANSWERED [DONE] [updated the get_questions endpoint]
-23. Endpoint to get all the teams and password [DONE]
-24. Admin dashboard for hackathon status, quick stats (num team, num questons, num answer), time left [DONE]
+19. Save which tests the user's answer failed [DONE]
+20. Export results (basically leaderboard in a csv) [DONE]
+21. Question status for each team profile: CORRECT/INCORRECT/NOT_ANSWERED [DONE] [updated the get_questions endpoint]
+22. Endpoint to get all the teams and password [DONE]
+23. Admin dashboard for hackathon status, quick stats (num team, num questons, num answer), time left [DONE]
+24. System setting update - point stuff [DONE]
 
 ## Useful tools:
 1. [SQL Browser](https://sqlitebrowser.org/dl/)
