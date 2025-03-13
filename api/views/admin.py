@@ -1,9 +1,10 @@
+from datetime import datetime
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from django.db import transaction
-from db.models import TeamProfile, TeamMember, Question, Answer, Account
+from db.models import TeamProfile, TeamMember, Question, Answer, Account, HackathonSettings
 
 
 class ResetHackathon(APIView):
@@ -375,3 +376,50 @@ class GetTeams(APIView):
         team_data = [{"id": team.id, "name": team.team_name, "password": team.team_password} for team in teams]
 
         return Response({"teams": team_data}, status=status.HTTP_200_OK)
+
+class AdminDashboard(APIView):
+    """
+    Admin endpoint to get all team profiles, questions, and answers.
+
+    Requires admin authentication.
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        if not request.user.is_admin:
+            return Response(
+                {"error": "You don't have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        hackathon_settings = HackathonSettings.get_instance()
+        hackathon_status = hackathon_settings.has_started
+
+        num_teams = TeamProfile.objects.count()
+        num_questions = Question.objects.count()
+        total_answers = Answer.objects.count()
+
+        current_time = datetime.now()
+        time_started = hackathon_settings.time_started
+        if time_started.tzinfo is not None:
+            time_started = time_started.replace(tzinfo=None)
+        if hackathon_settings.is_paused:
+            current_time = hackathon_settings.time_paused
+            if current_time.tzinfo is not None:
+                current_time = current_time.replace(tzinfo=None)
+        time_left = hackathon_settings.duration - (current_time - time_started - hackathon_settings.time_spent_paused)
+        time_left_seconds = time_left.total_seconds()
+
+        return Response(
+            {
+                "hackathon_status": hackathon_status,
+                "num_teams": num_teams,
+                "num_questions": num_questions,
+                "total_answers": total_answers,
+                "time_left_seconds": time_left_seconds,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+

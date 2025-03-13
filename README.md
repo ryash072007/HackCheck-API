@@ -33,6 +33,8 @@ NOTE: the user account is just the team account. The jwt token sent to the user 
 21. Export results
 22. Question status for each team profile: CORRECT/INCORRECT/NOT_ANSWERED [DONE] [updated the get_questions endpoint]
 23. Endpoint to get all the teams and password [DONE]
+24. Admin dashboard for hackathon status, quick stats (num team, num questons, num answer), time left [DONE]
 
 ## Useful tools:
 1. [SQL Browser](https://sqlitebrowser.org/dl/)
+2. [Echo API](https://marketplace.visualstudio.com/items?itemName=EchoAPI.echoapi-for-vscode)

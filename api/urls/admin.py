@@ -1,5 +1,5 @@
 from django.urls import path
-from api.views import ResetHackathon, AdminSignIn, DeleteTeam, AddQuestion, RemoveQuestion, UpdateQuestion, GetTeams
+from api.views import ResetHackathon, AdminSignIn, DeleteTeam, AddQuestion, RemoveQuestion, UpdateQuestion, GetTeams, AdminDashboard
 
 urlpatterns = [
     path('reset/', ResetHackathon.as_view()),
@@ -9,4 +9,5 @@ urlpatterns = [
     path('remove_question/', RemoveQuestion.as_view()),
     path('update_question/', UpdateQuestion.as_view()),
     path('get_teams/', GetTeams.as_view()),
+    path('dashboard/', AdminDashboard.as_view()),
 ]
