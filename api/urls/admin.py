@@ -1,5 +1,5 @@
 from django.urls import path
-from api.views import ResetHackathonDatabase, AdminSignIn, DeleteTeam, AddQuestion, RemoveQuestion, UpdateQuestion, GetTeams, AdminDashboard, GetScoreSettings, UpdateScoreSettings, ExportLeaderboard
+from api.views import ResetHackathonDatabase, AdminSignIn, DeleteTeam, AddQuestion, RemoveQuestion, UpdateQuestion, GetTeams, AdminDashboard, GetScoreSettings, UpdateScoreSettings, ExportLeaderboard, ResetCurrentHackathon
 
 urlpatterns = [
     path('reset_database/', ResetHackathonDatabase.as_view()),
@@ -12,5 +12,6 @@ urlpatterns = [
     path('dashboard/', AdminDashboard.as_view()),
     path('get_score_settings/', GetScoreSettings.as_view()),
     path('update_score_settings/', UpdateScoreSettings.as_view()),
-    path('export_leaderboard/', ExportLeaderboard.as_view())
+    path('export_leaderboard/', ExportLeaderboard.as_view()),
+    path('reset_hackathon/', ResetCurrentHackathon.as_view())
 ]

@@ -531,3 +531,36 @@ class ExportLeaderboard(APIView):
                 f.write(f"{team['Team Name']},{team['Score']}\n")
 
         return response
+
+class ResetCurrentHackathon(APIView):
+    """
+    Admin endpoint to reset the current hackathon.
+
+    Requires admin authentication.
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        if not request.user.is_admin:
+            return Response(
+                {"error": "You don't have permission to perform this action."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        hacathon_settings = HackathonSettings.get_instance()
+        hacathon_settings.has_started = False
+        hacathon_settings.has_ended = False
+        hacathon_settings.time_started = None
+        hacathon_settings.time_paused = None
+        hacathon_settings.is_paused = False
+        hacathon_settings.time_spent_paused = timedelta(seconds=0)
+        hacathon_settings.save()
+
+        Answer.objects.all().delete()
+        TeamProfile.objects.all().update(score=0, participants_registered=0)
+
+        return Response(
+            {"message": "Current hackathon successfully reset."},
+            status=status.HTTP_200_OK,
+        )
