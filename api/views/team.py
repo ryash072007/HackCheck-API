@@ -52,6 +52,20 @@ class GetAllQuestions(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
+
+        if request.user.is_admin:
+            questions = Question.objects.all().order_by("number")
+            data = []
+            for question in questions:
+                data.append(
+                    {
+                        "question": question.title,
+                        "question_number": question.number,
+                        "question_id": question.id,
+                    }
+                )
+            return Response({"questions": data, "type": "admin"}, status=status.HTTP_200_OK)
+
         participant_data = extract_info_from_jwt(request)
         team_id = participant_data["participant"]["team_id"]
         team = TeamProfile.objects.get(id=team_id)
@@ -83,4 +97,88 @@ class GetAllQuestions(APIView):
                 }
             )
 
-        return Response({"questions": data}, status=status.HTTP_200_OK)
+        return Response({"questions": data, "type": "team"}, status=status.HTTP_200_OK)
+
+class GetSingleQuestion(APIView):
+    """
+    Get the status of a single question for the authenticated user's team.
+    This endpoint returns the status of a single question for the team that the authenticated user belongs to.
+    The status can be one of the following:
+    - 'NOT_ANSWERED': The team has not submitted any answers for the question.
+    - 'CORRECT': The team has submitted a correct answer for the question.
+    - 'INCORRECT': The team has submitted answers for the question, but none are correct.
+    Returns:
+        Response: A JSON object with a 'question' object containing the following fields:
+            - question (str): The title of the question.
+            - question_name (str): The number/identifier of the question.
+            - status (str): The status of the question ('NOT_ANSWERED', 'CORRECT', or 'INCORRECT').
+
+    Get questions status.
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        question_id = request.data.get("question_id")
+        question_number = request.data.get("question_number")
+
+        if not question_id and not question_number:
+            return Response(
+                {
+                    "error": "Missing 'question_id' or 'question_number' in request body."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if question_id and question_number:
+            return Response(
+                {"error": "Provide only one of 'question_id' or 'question_number'."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            if question_number:
+                question = Question.objects.get(number=question_number)
+            else:
+                question = Question.objects.get(id=question_id)
+        except Question.DoesNotExist:
+            return Response(
+                {"error": f"Question does not exist."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        if request.user.is_admin:
+            return Response(
+                {"question_id": question.id, "title": question.title, "question_number": question.number, "description": question.description, "samples": question.samples, "tests": question.tests, "type": "admin"},
+                status=status.HTTP_200_OK,
+            )
+
+        participant_data = extract_info_from_jwt(request)
+        team_id = participant_data["participant"]["team_id"]
+        team = TeamProfile.objects.get(id=team_id)
+
+        q_status = None
+        score = 0
+        answers = Answer.objects.filter(question=question, team=team)
+        if not answers:
+            q_status = "NOT_ANSWERED"
+        else:
+            correct_answers = answers.filter(is_correct_answer=True).exists()
+            if correct_answers:
+                q_status = "CORRECT"
+                score = answers.filter(is_correct_answer=True).first().score
+            else:
+                q_status = "INCORRECT"
+
+        return Response(
+            {
+                "question_number": question.number,
+                "status": q_status,
+                "score": score,
+                "question_id": question.id,
+                "title": question.title,
+                "description": question.description,
+                "samples": question.samples,
+                "type": "team"
+            }, status=status.HTTP_200_OK
+            )
