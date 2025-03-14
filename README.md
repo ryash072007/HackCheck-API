@@ -1,41 +1,782 @@
 # HackCheck API
  HackCheck is a fully automated hackathon platform where participants solve a set number of coding challenges within a given time. It features real-time code evaluation, automatic scoring, and a leaderboard system. The backend is built with Python and Django, while the frontend uses Next.js. It also integrates a judge system like CodeRunner for automated code execution and grading.
 
-# Softwares being used: Django PostgreSQL
+# HackCheck API Documentation
 
-# Extra details
-1. At any time, only one hackathon will be active.
-2. The entire team will have the same login. Before the hackathon begins, they will be allowed to login and enter what name they will be using.
+This document provides a comprehensive guide to all available endpoints in the HackCheck-API project. For each endpoint, you'll find information about required authentication, input parameters, and expected responses.
 
-## To-Do Items:
-1. User and Admin accounts with JWT authentication using a {length of hackathon} lifetime. [DONE]
-NOTE: the user account is just the team account. The jwt token sent to the user will contain the TeamMember instance of the participant which will be used for storage of information.
-2. Admin should have the functionality to edit/add/remove questions. [DONE]
-3. Admin show have the ability to add/edit/remove sample input and output similar to hackerrank. [DONE] [Just edit the question]
-4. Admin should be able to reset the database to a clean state for the next hackathon. [DONE]
-5. Ability for the user to test their code with 3 test input and output (Backend part is to just store these?) [IF backend end part is to store, then done]
-6. Each participant is part of a team, and the score is tabulated for the whole team. The score is based on the time spent till submission of the code. [DONE]
-7. Store all the data sent by any user to keep accurate data tracking (and data saving for redundancy) [DONE]
-8. API to send the participant's code to the database. [DONE]
+## Table of Contents
 
-9. Make a bool that tells if hackathon has started or not -> and then allow participant interaction [DONE]
-10. Make a request to get points of a particular team / all the teams. [DONE] [if all returns a sorted by point version]
-11. Server-side timing of hackathon [DONE]
-12. Request to get time left in the hackathon [DONE]
-13. Endpoint to get all questions / edit questions [DONE]
-14. Endpoint to get leaderboard - Just team name and points in decreasing order [DONE] [with through point 10]
-15. Ability to pause/[DONE] edit the time left [DONE]
-16. Delete teams [DONE]
-17. 4 Test input and output add to the question [DONE]
-18. Verify only 4 test in/out are saved for Question and 3 sample in/out when creating the question [DONE]
-19. Save which tests the user's answer failed [DONE]
-20. Export results (basically leaderboard in a csv) [DONE]
-21. Question status for each team profile: CORRECT/INCORRECT/NOT_ANSWERED [DONE] [updated the get_questions endpoint]
-22. Endpoint to get all the teams and password [DONE]
-23. Admin dashboard for hackathon status, quick stats (num team, num questons, num answer), time left [DONE]
-24. System setting update - point stuff [DONE]
-25. Reset the answer submissions, timer and the points [DONE]
+1. Authentication
+2. Team Management
+3. Questions and Answers
+4. Hackathon Administration
+5. System Management
+6. Utilities
 
-## Useful tools:
-1. [SQL Browser](https://sqlitebrowser.org/dl/)
-2. [Echo API](https://marketplace.visualstudio.com/items?itemName=EchoAPI.echoapi-for-vscode)
+---
+
+## 1. Authentication
+
+### 1.1. Team Sign In
+
+**Endpoint:** `/team_signin/`  
+**Method:** POST  
+**Authentication:** None required  
+**Description:** Authenticates a team member and provides a JWT token for access.
+
+**Request Body:**
+```json
+{
+  "team_name": "example_team",
+  "password": "example_password",
+  "participant_name": "John Doe"
+}
+```
+
+**Response:**
+```json
+{
+  "team_name": "example_team",
+  "score": 0,
+  "participant_name": "John Doe",
+  "token": "jwt_token_string"
+}
+```
+
+**Error Responses:**
+- `400 Bad Request` - Invalid team name or password
+- `400 Bad Request` - Participant name is required
+- `400 Bad Request` - Hackathon has not started yet
+- `400 Bad Request` - Team is full
+
+### 1.2. Admin Sign In
+
+**Endpoint:** `/admin_signin/`  
+**Method:** POST  
+**Authentication:** None required  
+**Description:** Authenticates an admin user and provides a JWT token with admin privileges.
+
+**Request Body:**
+```json
+{
+  "username": "admin_username",
+  "password": "admin_password"
+}
+```
+
+**Response:**
+```json
+{
+  "username": "admin_username",
+  "token": "jwt_token_string"
+}
+```
+
+**Error Responses:**
+- `400 Bad Request` - Invalid username
+- `400 Bad Request` - Wrong password
+
+---
+
+## 2. Team Management
+
+### 2.1. Register Team
+
+**Endpoint:** `/register/`  
+**Method:** POST  
+**Authentication:** Admin JWT token  
+**Description:** Creates a new team.
+
+**Request Body:**
+```json
+{
+  "team_name": "new_team",
+  "password": "team_password"
+}
+```
+
+**Response:**
+```json
+{
+  "message": "Team new_team registered successfully",
+  "team_id": 1,
+  "team_name": "new_team"
+}
+```
+
+**Error Responses:**
+- `400 Bad Request` - Team name and password are required
+- `400 Bad Request` - Team name already taken
+- `403 Forbidden` - Not an admin user
+- `500 Internal Server Error` - Registration failed
+
+### 2.2. Get Team Points
+
+**Endpoint:** `/get_points/`  
+**Method:** POST  
+**Authentication:** Team or Admin JWT token  
+**Description:** Gets points for a specific team or all teams.
+
+**Request Body:**
+```json
+{
+  "team_id": 1  // Optional - Omit or use "ALL" to get all teams
+}
+```
+
+**Response (Single Team):**
+```json
+{
+  "score": 100
+}
+```
+
+**Response (All Teams):**
+```json
+{
+  "teams": [
+    {
+      "id": 2,
+      "team_name": "Team Alpha",
+      "score": 150
+    },
+    {
+      "id": 1,
+      "team_name": "Team Beta",
+      "score": 100
+    }
+  ]
+}
+```
+
+**Error Responses:**
+- `404 Not Found` - Team not found
+
+### 2.3. Delete Team
+
+**Endpoint:** `/delete_team/`  
+**Method:** POST  
+**Authentication:** Admin JWT token  
+**Description:** Deletes a team by ID.
+
+**Request Body:**
+```json
+{
+  "team_id": 1
+}
+```
+
+**Response:**
+```json
+{
+  "message": "Team 1 successfully deleted."
+}
+```
+
+**Error Responses:**
+- `400 Bad Request` - Missing 'team_id' in request body
+- `403 Forbidden` - Not an admin user
+- `404 Not Found` - Team does not exist
+- `500 Internal Server Error` - Error occurred while deleting team
+
+### 2.4. Get Teams
+
+**Endpoint:** `/get_teams/`  
+**Method:** POST  
+**Authentication:** Admin JWT token  
+**Description:** Gets all team profiles including passwords.
+
+**Request Body:** None required
+
+**Response:**
+```json
+{
+  "teams": [
+    {
+      "id": 1,
+      "name": "Team Alpha",
+      "password": "password1"
+    },
+    {
+      "id": 2,
+      "name": "Team Beta",
+      "password": "password2"
+    }
+  ]
+}
+```
+
+**Error Responses:**
+- `403 Forbidden` - Not an admin user
+
+---
+
+## 3. Questions and Answers
+
+### 3.1. Get All Questions
+
+**Endpoint:** `/get_questions/`  
+**Method:** POST  
+**Authentication:** Team or Admin JWT token  
+**Description:** Gets all questions. Admin view shows basic info, team view shows status.
+
+**Request Body:** None required
+
+**Response (Admin):**
+```json
+{
+  "questions": [
+    {
+      "question": "Sort an array",
+      "question_number": 1,
+      "question_id": 1
+    },
+    {
+      "question": "Find the maximum value",
+      "question_number": 2,
+      "question_id": 2
+    }
+  ],
+  "type": "admin"
+}
+```
+
+**Response (Team):**
+```json
+{
+  "questions": [
+    {
+      "question": "Sort an array",
+      "question_number": 1,
+      "question_id": 1,
+      "status": "CORRECT",
+      "score": 95
+    },
+    {
+      "question": "Find the maximum value",
+      "question_number": 2,
+      "question_id": 2,
+      "status": "NOT_ANSWERED",
+      "score": 0
+    }
+  ],
+  "type": "team"
+}
+```
+
+### 3.2. Get Single Question
+
+**Endpoint:** `/get_question/`  
+**Method:** POST  
+**Authentication:** Team or Admin JWT token  
+**Description:** Gets a single question by ID or number.
+
+**Request Body:**
+```json
+{
+  "question_id": 1  // OR "question_number": 1 (don't use both)
+}
+```
+
+**Response (Admin):**
+```json
+{
+  "question_id": 1,
+  "title": "Sort an array",
+  "question_number": 1,
+  "description": "Write a function to sort an array...",
+  "samples": {
+    "input": ["example input data"],
+    "output": ["example output data"]
+  },
+  "tests": {
+    "input": ["test input data"],
+    "output": ["test output data"]
+  },
+  "type": "admin"
+}
+```
+
+**Response (Team):**
+```json
+{
+  "question_number": 1,
+  "status": "NOT_ANSWERED",
+  "score": 0,
+  "question_id": 1,
+  "title": "Sort an array",
+  "description": "Write a function to sort an array...",
+  "samples": {
+    "input": ["example input data"],
+    "output": ["example output data"]
+  },
+  "type": "team"
+}
+```
+
+**Error Responses:**
+- `400 Bad Request` - Missing 'question_id' or 'question_number' in request body
+- `400 Bad Request` - Provide only one of 'question_id' or 'question_number'
+- `404 Not Found` - Question does not exist
+
+### 3.3. Add Question
+
+**Endpoint:** `/add_question/`  
+**Method:** POST  
+**Authentication:** Admin JWT token  
+**Description:** Adds a new question.
+
+**Request Body:**
+```json
+{
+  "title": "New Question",
+  "description": "Question description...",
+  "samples": {
+    "input": ["sample input 1", "sample input 2", "sample input 3"],
+    "output": ["sample output 1", "sample output 2", "sample output 3"]
+  },
+  "tests": {
+    "input": ["test input 1", "test input 2", "test input 3", "test input 4"],
+    "output": ["test output 1", "test output 2", "test output 3", "test output 4"]
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "message": "Question successfully added.",
+  "question": {
+    "id": 3,
+    "question_number": 3,
+    "title": "New Question"
+  }
+}
+```
+
+**Error Responses:**
+- `400 Bad Request` - Missing required fields
+- `400 Bad Request` - Samples and tests must be dictionaries
+- `400 Bad Request` - Samples must have 'input' and 'output' keys
+- `400 Bad Request` - Tests must have 'input' and 'output' keys
+- `403 Forbidden` - Not an admin user
+- `500 Internal Server Error` - Error occurred while adding the question
+
+### 3.4. Remove Question
+
+**Endpoint:** `/remove_question/`  
+**Method:** POST  
+**Authentication:** Admin JWT token  
+**Description:** Removes a question by ID or number.
+
+**Request Body:**
+```json
+{
+  "question_id": 1  // OR "question_number": 1 (don't use both)
+}
+```
+
+**Response:**
+```json
+{
+  "message": "Question id 1 successfully removed."
+}
+```
+
+**Error Responses:**
+- `400 Bad Request` - Missing 'question_id' or 'question_number' in request body
+- `400 Bad Request` - Provide only one of 'question_id' or 'question_number'
+- `403 Forbidden` - Not an admin user
+- `404 Not Found` - Question does not exist
+- `500 Internal Server Error` - Error occurred while removing question
+
+### 3.5. Update Question
+
+**Endpoint:** `/update_question/`  
+**Method:** POST  
+**Authentication:** Admin JWT token  
+**Description:** Updates an existing question.
+
+**Request Body:**
+```json
+{
+  "question_id": 1,  // OR "question_number": 1 (don't use both)
+  "title": "Updated Title",  // Optional
+  "description": "Updated description...",  // Optional
+  "samples": {  // Optional
+    "input": ["sample input 1", "sample input 2", "sample input 3"],
+    "output": ["sample output 1", "sample output 2", "sample output 3"]
+  },
+  "tests": {  // Optional
+    "input": ["test input 1", "test input 2", "test input 3", "test input 4"],
+    "output": ["test output 1", "test output 2", "test output 3", "test output 4"]
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "message": "Question successfully updated.",
+  "question": {
+    "id": 1,
+    "question_number": 1,
+    "title": "Updated Title"
+  }
+}
+```
+
+**Error Responses:**
+- `400 Bad Request` - Missing 'question_id' or 'question_number' in request body
+- `400 Bad Request` - Provide only one of 'question_id' or 'question_number'
+- `400 Bad Request` - Samples must be a dictionary
+- `400 Bad Request` - Tests must be a dictionary
+- `403 Forbidden` - Not an admin user
+- `404 Not Found` - Question does not exist
+- `500 Internal Server Error` - Error occurred while updating the question
+
+### 3.6. Submit Answer
+
+**Endpoint:** `/submit_answer/`  
+**Method:** POST  
+**Authentication:** Team JWT token  
+**Description:** Submits an answer for a question.
+
+**Request Body:**
+```json
+{
+  "question_id": 1,
+  "answer_code": "code string here",
+  "language": "python"
+}
+```
+
+**Response:**
+```json
+{
+  "message": "Answer submitted successfully."
+}
+```
+
+**Error Responses:**
+- Various error responses depending on submission validity
+
+---
+
+## 4. Hackathon Administration
+
+### 4.1. Start Hackathon
+
+**Endpoint:** `/start_hackathon/`  
+**Method:** POST  
+**Authentication:** Admin JWT token  
+**Description:** Starts the hackathon.
+
+**Request Body:** None required
+
+**Response:**
+```json
+{
+  "message": "Hackathon started successfully."
+}
+```
+
+**Error Responses:**
+- `400 Bad Request` - Hackathon has already started
+- `403 Forbidden` - Not an admin user
+
+### 4.2. End Hackathon
+
+**Endpoint:** `/end_hackathon/`  
+**Method:** POST  
+**Authentication:** Admin JWT token  
+**Description:** Ends the hackathon.
+
+**Request Body:** None required
+
+**Response:**
+```json
+{
+  "message": "Hackathon ended successfully."
+}
+```
+
+**Error Responses:**
+- `400 Bad Request` - Hackathon has already ended
+- `403 Forbidden` - Not an admin user
+
+### 4.3. Pause Hackathon
+
+**Endpoint:** `/pause_hackathon/`  
+**Method:** POST  
+**Authentication:** Admin JWT token  
+**Description:** Pauses the hackathon timer.
+
+**Request Body:** None required
+
+**Response:**
+```json
+{
+  "message": "Hackathon paused successfully."
+}
+```
+
+**Error Responses:**
+- `400 Bad Request` - Hackathon is already paused
+- `403 Forbidden` - Not an admin user
+
+### 4.4. Resume Hackathon
+
+**Endpoint:** `/resume_hackathon/`  
+**Method:** POST  
+**Authentication:** Admin JWT token  
+**Description:** Resumes a paused hackathon.
+
+**Request Body:** None required
+
+**Response:**
+```json
+{
+  "message": "Hackathon resumed successfully."
+}
+```
+
+**Error Responses:**
+- `400 Bad Request` - Hackathon is not paused
+- `403 Forbidden` - Not an admin user
+
+### 4.5. Get Time Left
+
+**Endpoint:** `/get_time_left/`  
+**Method:** POST  
+**Authentication:** Team or Admin JWT token  
+**Description:** Gets the time remaining in the hackathon.
+
+**Request Body:** None required
+
+**Response:**
+```json
+{
+  "time_left": 3600.0  // Time left in seconds
+}
+```
+
+**Error Responses:**
+- `400 Bad Request` - Hackathon has not started yet
+- `400 Bad Request` - Hackathon has ended
+
+### 4.6. Change Time Left
+
+**Endpoint:** `/change_time_left/`  
+**Method:** POST  
+**Authentication:** Admin JWT token  
+**Description:** Changes the time remaining in the hackathon.
+
+**Request Body:**
+```json
+{
+  "time_left_seconds": 3600  // New time in seconds
+}
+```
+
+**Response:**
+```json
+{
+  "message": "Time left updated successfully."
+}
+```
+
+**Error Responses:**
+- `400 Bad Request` - Missing 'time_left_seconds' in request body
+- `403 Forbidden` - Not an admin user
+
+### 4.7. Change Max Participants
+
+**Endpoint:** `/change_max_participants/`  
+**Method:** POST  
+**Authentication:** Admin JWT token  
+**Description:** Changes the maximum allowed team size.
+
+**Request Body:**
+```json
+{
+  "max_participants": 5
+}
+```
+
+**Response:**
+```json
+{
+  "message": "Max participants changed successfully to 5"
+}
+```
+
+**Error Responses:**
+- `400 Bad Request` - max_participants is required
+- `403 Forbidden` - Not an admin user
+
+---
+
+## 5. System Management
+
+### 5.1. Reset Hackathon Database
+
+**Endpoint:** `/reset_database/`  
+**Method:** POST  
+**Authentication:** Admin JWT token  
+**Description:** Resets all hackathon data (teams, questions, answers).
+
+**Request Body:** None required
+
+**Response:**
+```json
+{
+  "message": "Database successfully reset for new hackathon",
+  "deleted": {
+    "accounts": 10,
+    "teams": 10,
+    "members": 25,
+    "questions": 5,
+    "answers": 50
+  }
+}
+```
+
+**Error Responses:**
+- `403 Forbidden` - Not an admin user
+- `500 Internal Server Error` - Error occurred while resetting the database
+
+### 5.2. Reset Current Hackathon
+
+**Endpoint:** `/reset_hackathon/`  
+**Method:** POST  
+**Authentication:** Admin JWT token  
+**Description:** Resets the current hackathon state (timer, answers, scores) without deleting teams or questions.
+
+**Request Body:** None required
+
+**Response:**
+```json
+{
+  "message": "Current hackathon successfully reset."
+}
+```
+
+**Error Responses:**
+- `403 Forbidden` - Not an admin user
+
+### 5.3. Admin Dashboard
+
+**Endpoint:** `/dashboard/`  
+**Method:** POST  
+**Authentication:** Admin JWT token  
+**Description:** Gets overview information about the hackathon.
+
+**Request Body:** None required
+
+**Response:**
+```json
+{
+  "hackathon_status": true,
+  "num_teams": 10,
+  "num_questions": 5,
+  "total_answers": 50,
+  "time_left_seconds": 3600.0
+}
+```
+
+**Error Responses:**
+- `403 Forbidden` - Not an admin user
+
+### 5.4. Get Score Settings
+
+**Endpoint:** `/get_score_settings/`  
+**Method:** POST  
+**Authentication:** Admin JWT token  
+**Description:** Gets the current scoring settings for the hackathon.
+
+**Request Body:** None required
+
+**Response:**
+```json
+{
+  "max_score": 100,
+  "score_decrement_interval_seconds": 60,
+  "score_decrement_per_interval": 1
+}
+```
+
+**Error Responses:**
+- `403 Forbidden` - Not an admin user
+
+### 5.5. Update Score Settings
+
+**Endpoint:** `/update_score_settings/`  
+**Method:** POST  
+**Authentication:** Admin JWT token  
+**Description:** Updates the scoring settings for the hackathon.
+
+**Request Body:**
+```json
+{
+  "max_score": 100,  // Optional
+  "score_decrement_interval_seconds": 60,  // Optional
+  "score_decrement_per_interval": 1  // Optional
+}
+```
+
+**Response:**
+```json
+{
+  "message": "Score settings successfully updated."
+}
+```
+
+**Error Responses:**
+- `400 Bad Request` - Provide at least one setting to update
+- `403 Forbidden` - Not an admin user
+
+### 5.6. Export Leaderboard
+
+**Endpoint:** `/export_leaderboard/`  
+**Method:** POST  
+**Authentication:** Admin JWT token  
+**Description:** Exports the leaderboard data as CSV.
+
+**Request Body:** None required
+
+**Response:** CSV file data
+
+**Error Responses:**
+- `403 Forbidden` - Not an admin user
+
+---
+
+## 6. Utilities
+
+### 6.1. Test Authentication
+
+**Endpoint:** `/test_auth/`  
+**Method:** POST  
+**Authentication:** Any valid JWT token  
+**Description:** Tests if authentication is working correctly.
+
+**Request Body:** None required
+
+**Response:** Depends on implementation
+
+**Error Responses:**
+- Authentication related errors
+
+---
+
+## Notes
+
+- All endpoints require a valid JWT token in the Authorization header except for sign-in endpoints
+- Team JWT tokens are obtained through the `/team_signin/` endpoint
+- Admin JWT tokens are obtained through the `/admin_signin/` endpoint
+- JWT tokens should be included in the request headers as: `Authorization: Bearer <token>`
+- All dates are in ISO format
+- All times are in seconds
+- The API follows RESTful principles but uses POST for all endpoints for consistency
