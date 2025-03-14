@@ -175,15 +175,18 @@ class AddQuestion(APIView):
                 {"error": "Samples and tests must be dictionaries."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
-        if len(samples) != 3 or len(tests) != 4:
+        
+        if not ("input" in samples and "output" in samples):
             return Response(
-                {"error": "Samples must have 3 inputs and tests must have 4 inputs."},
+                {"error": "Samples must have 'input' and 'output' keys."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
-        print(samples)
-        print(tests)
+        
+        if not ("input" in tests and "output" in tests):
+            return Response(
+                {"error": "Tests must have 'input' and 'output' keys."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         question_number = Question.objects.count() + 1
 

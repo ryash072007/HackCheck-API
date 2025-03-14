@@ -14,26 +14,31 @@ class Question(models.Model):
 
     samples = models.JSONField(
         null=True, blank=True
-    )  # The key is the sample input, the value is the ouput
+    )
     tests = models.JSONField(
         null=True, blank=True
-    )  # The key is the test input, the value is the output
+    )
 
     def __str__(self):
         return self.title
 
     def save(self, *args, **kwargs):
-        samples = self.samples
-        if samples is not None:
-            if not isinstance(samples, dict):
+        """
+        structure: {
+            "input": [],
+            "output": []
+            }
+        """
+        if self.samples is not None:
+            if not isinstance(self.samples, dict):
                 raise ValidationError("Samples must be a dictionary.")
-            if len(samples) != 3:
-                raise ValidationError("The number of sample inputs has to be 3.")
+            if not ("input" in self.samples and "output" in self.samples):
+                raise ValidationError("Samples must have 'input' and 'output' keys")
         if self.tests is not None:
             if not isinstance(self.tests, dict):
                 raise ValidationError("Tests must be a dictionary.")
-            if len(self.tests) != 4:
-                raise ValidationError("The number of test inputs has to be 4.")
+            if not ("input" in self.tests and "output" in self.tests):
+                raise ValidationError("Samples must have 'input' and 'output' keys")
 
         return super().save(*args, **kwargs)
 
