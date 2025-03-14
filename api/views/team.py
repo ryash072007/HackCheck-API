@@ -64,7 +64,9 @@ class GetAllQuestions(APIView):
                         "question_id": question.id,
                     }
                 )
-            return Response({"questions": data, "type": "admin"}, status=status.HTTP_200_OK)
+            return Response(
+                {"questions": data, "type": "admin"}, status=status.HTTP_200_OK
+            )
 
         participant_data = extract_info_from_jwt(request)
         team_id = participant_data["participant"]["team_id"]
@@ -98,6 +100,7 @@ class GetAllQuestions(APIView):
             )
 
         return Response({"questions": data, "type": "team"}, status=status.HTTP_200_OK)
+
 
 class GetSingleQuestion(APIView):
     """
@@ -149,7 +152,15 @@ class GetSingleQuestion(APIView):
 
         if request.user.is_admin:
             return Response(
-                {"question_id": question.id, "title": question.title, "question_number": question.number, "description": question.description, "samples": question.samples, "tests": question.tests, "type": "admin"},
+                {
+                    "question_id": question.id,
+                    "title": question.title,
+                    "question_number": question.number,
+                    "description": question.description,
+                    "samples": question.samples,
+                    "tests": question.tests,
+                    "type": "admin",
+                },
                 status=status.HTTP_200_OK,
             )
 
@@ -179,6 +190,7 @@ class GetSingleQuestion(APIView):
                 "title": question.title,
                 "description": question.description,
                 "samples": question.samples,
-                "type": "team"
-            }, status=status.HTTP_200_OK
-            )
+                "type": "team",
+            },
+            status=status.HTTP_200_OK,
+        )
