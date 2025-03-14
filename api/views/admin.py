@@ -342,22 +342,12 @@ class UpdateQuestion(APIView):
                     {"error": "Samples must be a dictionary."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-            if len(samples) != 3:
-                return Response(
-                    {"error": "Samples must have 3 inputs."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
             question.samples = samples
 
         if tests is not None:
             if not isinstance(tests, dict):
                 return Response(
                     {"error": "Tests must be a dictionary."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-            if len(tests) != 4:
-                return Response(
-                    {"error": "Tests must have 4 inputs."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             question.tests = tests
