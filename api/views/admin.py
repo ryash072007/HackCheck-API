@@ -149,6 +149,7 @@ class AddQuestion(APIView):
         description = request.data.get("description")
         samples = request.data.get("samples")
         tests = request.data.get("tests")
+        difficulty = request.data.get("difficulty")
 
         # Check each required field and provide specific error messages
         missing_fields = []
@@ -187,6 +188,11 @@ class AddQuestion(APIView):
                 {"error": "Tests must have 'input' and 'output' keys."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        if difficulty not in ["easy", "medium", "hard"]:
+            return Response(
+                {"error": "Difficulty must be 'easy', 'medium', or 'hard'."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         question_number = Question.objects.count() + 1
 
@@ -197,6 +203,7 @@ class AddQuestion(APIView):
                 samples=samples,
                 tests=tests,
                 number=question_number,
+                difficulty=difficulty,
             )
             return Response(
                 {
@@ -205,6 +212,7 @@ class AddQuestion(APIView):
                         "id": question.id,
                         "question_number": question.number,
                         "title": question.title,
+                        "difficulty": question.difficulty,
                     },
                 },
                 status=status.HTTP_201_CREATED,
@@ -329,6 +337,7 @@ class UpdateQuestion(APIView):
         description = request.data.get("description")
         samples = request.data.get("samples")
         tests = request.data.get("tests")
+        difficulty = request.data.get("difficulty")
 
         if title is not None:
             question.title = title
@@ -351,6 +360,14 @@ class UpdateQuestion(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             question.tests = tests
+        
+        if difficulty is not None:
+            if difficulty not in ["easy", "medium", "hard"]:
+                return Response(
+                    {"error": "Difficulty must be 'easy', 'medium', or 'hard'."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            question.difficulty = difficulty
 
         try:
             question.save()
@@ -361,6 +378,7 @@ class UpdateQuestion(APIView):
                         "id": question.id,
                         "question_number": question.number,
                         "title": question.title,
+                        "difficulty": question.difficulty,
                     },
                 },
                 status=status.HTTP_200_OK,

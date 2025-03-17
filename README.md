@@ -230,12 +230,14 @@ This document provides a comprehensive guide to all available endpoints in the H
     {
       "question": "Sort an array",
       "question_number": 1,
-      "question_id": 1
+      "question_id": 1,
+      "difficulty": "easy"
     },
     {
       "question": "Find the maximum value",
       "question_number": 2,
-      "question_id": 2
+      "question_id": 2,
+      "difficulty": "medium"
     }
   ],
   "type": "admin"
@@ -251,14 +253,16 @@ This document provides a comprehensive guide to all available endpoints in the H
       "question_number": 1,
       "question_id": 1,
       "status": "CORRECT",
-      "score": 95
+      "score": 95,
+      "difficulty": "easy"
     },
     {
       "question": "Find the maximum value",
       "question_number": 2,
       "question_id": 2,
       "status": "NOT_ANSWERED",
-      "score": 0
+      "score": 0,
+      "difficulty": "medium"
     }
   ],
   "type": "team"
@@ -294,6 +298,7 @@ This document provides a comprehensive guide to all available endpoints in the H
     "input": ["test input data"],
     "output": ["test output data"]
   },
+  "difficulty": "easy",
   "type": "admin"
 }
 ```
@@ -311,6 +316,11 @@ This document provides a comprehensive guide to all available endpoints in the H
     "input": ["example input data"],
     "output": ["example output data"]
   },
+  "tests": {
+    "input": ["test input data"],
+    "output": ["test output data"]
+  },
+  "difficulty": "easy",
   "type": "team"
 }
 ```
@@ -339,7 +349,8 @@ This document provides a comprehensive guide to all available endpoints in the H
   "tests": {
     "input": ["test input 1", "test input 2", "test input 3", "test input 4"],
     "output": ["test output 1", "test output 2", "test output 3", "test output 4"]
-  }
+  },
+  "difficulty": "medium"
 }
 ```
 
@@ -350,7 +361,8 @@ This document provides a comprehensive guide to all available endpoints in the H
   "question": {
     "id": 3,
     "question_number": 3,
-    "title": "New Question"
+    "title": "New Question",
+    "difficulty": "medium"
   }
 }
 ```
@@ -360,6 +372,7 @@ This document provides a comprehensive guide to all available endpoints in the H
 - `400 Bad Request` - Samples and tests must be dictionaries
 - `400 Bad Request` - Samples must have 'input' and 'output' keys
 - `400 Bad Request` - Tests must have 'input' and 'output' keys
+- `400 Bad Request` - Difficulty must be 'easy', 'medium', or 'hard'
 - `403 Forbidden` - Not an admin user
 - `500 Internal Server Error` - Error occurred while adding the question
 
@@ -411,7 +424,8 @@ This document provides a comprehensive guide to all available endpoints in the H
   "tests": {  // Optional
     "input": ["test input 1", "test input 2", "test input 3", "test input 4"],
     "output": ["test output 1", "test output 2", "test output 3", "test output 4"]
-  }
+  },
+  "difficulty": "hard"  // Optional
 }
 ```
 
@@ -422,7 +436,8 @@ This document provides a comprehensive guide to all available endpoints in the H
   "question": {
     "id": 1,
     "question_number": 1,
-    "title": "Updated Title"
+    "title": "Updated Title",
+    "difficulty": "hard"
   }
 }
 ```
@@ -432,6 +447,7 @@ This document provides a comprehensive guide to all available endpoints in the H
 - `400 Bad Request` - Provide only one of 'question_id' or 'question_number'
 - `400 Bad Request` - Samples must be a dictionary
 - `400 Bad Request` - Tests must be a dictionary
+- `400 Bad Request` - Difficulty must be 'easy', 'medium', or 'hard'
 - `403 Forbidden` - Not an admin user
 - `404 Not Found` - Question does not exist
 - `500 Internal Server Error` - Error occurred while updating the question

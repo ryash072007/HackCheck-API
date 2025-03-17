@@ -62,6 +62,7 @@ class GetAllQuestions(APIView):
                         "question": question.title,
                         "question_number": question.number,
                         "question_id": question.id,
+                        "difficulty": question.difficulty,
                     }
                 )
             return Response(
@@ -96,6 +97,7 @@ class GetAllQuestions(APIView):
                     "question_id": question.id,
                     "status": q_status,
                     "score": score,
+                    "difficulty": question.difficulty,
                 }
             )
 
@@ -159,6 +161,7 @@ class GetSingleQuestion(APIView):
                     "description": question.description,
                     "samples": question.samples,
                     "tests": question.tests,
+                    "difficulty": question.difficulty,
                     "type": "admin",
                 },
                 status=status.HTTP_200_OK,
@@ -190,6 +193,8 @@ class GetSingleQuestion(APIView):
                 "title": question.title,
                 "description": question.description,
                 "samples": question.samples,
+                "tests": question.tests,
+                "difficulty": question.difficulty,
                 "type": "team",
             },
             status=status.HTTP_200_OK,

@@ -11,6 +11,9 @@ class Question(models.Model):
     title = models.CharField(max_length=300)
     number = models.IntegerField(unique=True, null=False, blank=False)
     description = models.TextField()
+    difficulty = models.CharField(
+        max_length=10, choices=[("easy", "Easy"), ("medium", "Medium"), ("hard", "Hard")]
+    )
 
     samples = models.JSONField(
         null=True, blank=True
