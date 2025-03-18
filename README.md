@@ -307,7 +307,7 @@ This document provides a comprehensive guide to all available endpoints in the H
 ```json
 {
   "question_number": 1,
-  "status": "NOT_ANSWERED",
+  "status": "CORRECT", // INCORRECT | NOT_ANSWERED
   "score": 0,
   "question_id": 1,
   "title": "Sort an array",
