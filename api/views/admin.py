@@ -241,6 +241,18 @@ class RemoveQuestion(APIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
+        hackathon_settings = HackathonSettings.get_instance()
+        if hackathon_settings.has_started:
+            return Response(
+                {"error": "Cannot remove questions after the hackathon has started."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if hackathon_settings.has_ended:
+            return Response(
+                {"error": "Cannot remove questions after the hackathon has ended."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         question_id = request.data.get("question_id")
         question_number = request.data.get("question_number")
 
@@ -268,6 +280,13 @@ class RemoveQuestion(APIView):
         try:
             question = Question.objects.get(id=question_id)
             question.delete()
+
+            with transaction.atomic():
+                remaining_questions = Question.objects.all().order_by('number')
+                for i, q in enumerate(remaining_questions, 1):
+                    if q.number != i:
+                        q.number = i
+                        q.save()
 
             return Response(
                 {"message": f"Question id {question_id} successfully removed."},
