@@ -139,12 +139,14 @@ This document provides a comprehensive guide to all available endpoints in the H
     {
       "id": 2,
       "team_name": "Team Alpha",
-      "score": 150
+      "score": 150,
+      "participants": ["Yash", "Gopesh"]
     },
     {
       "id": 1,
       "team_name": "Team Beta",
-      "score": 100
+      "score": 100,
+      "participants": ["Raj", "Jana"]
     }
   ]
 }

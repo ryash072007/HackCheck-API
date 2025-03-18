@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from db.models import Question
 from db.models.question import Answer
-from db.models.user import TeamProfile
+from db.models.user import TeamProfile, TeamMember
 from rest_framework.permissions import IsAuthenticated
 from api.helper import extract_info_from_jwt
 
@@ -18,7 +18,7 @@ class GetTeamPoints(APIView):
         if team_id is None or team_id == "ALL":
             teams = TeamProfile.objects.all().order_by("-score")
             data = [
-                {"id": team.id, "team_name": team.team_name, "score": team.score}
+                {"id": team.id, "team_name": team.team_name, "score": team.score, "participants": TeamMember.objects.filter(team=team).values_list("name", flat=True)}
                 for team in teams
             ]
             return Response({"teams": data}, status=status.HTTP_200_OK)
