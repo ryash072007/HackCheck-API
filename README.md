@@ -454,7 +454,7 @@ This document provides a comprehensive guide to all available endpoints in the H
 
 ### 3.6. Submit Answer
 
-**Endpoint:** `/submit_answer/`  
+**Endpoint:** `/submit/`  
 **Method:** POST  
 **Authentication:** Team JWT token  
 **Description:** Submits an answer for a question.
@@ -462,9 +462,13 @@ This document provides a comprehensive guide to all available endpoints in the H
 **Request Body:**
 ```json
 {
-  "question_id": 1,
-  "answer_code": "code string here",
-  "language": "python"
+  "question_number": 1,
+  "code": "code string here",
+  "is_correct_answer": false,
+  "tests": {
+    "input": ["test input data"],
+    "output": ["test output data"]
+  }
 }
 ```
 
@@ -476,7 +480,13 @@ This document provides a comprehensive guide to all available endpoints in the H
 ```
 
 **Error Responses:**
-- Various error responses depending on submission validity
+- `400 Bad Request` - Code is required to submit answer
+- `400 Bad Request` - Question number is required to submit answer
+- `400 Bad Request` - Tests are required to submit answer
+- `400 Bad Request` - Hackathon has not started yet
+- `400 Bad Request` - Hackathon has ended
+- `400 Bad Request` - This question has already been answered correctly
+- `404 Not Found` - Question does not exist
 
 ---
 
