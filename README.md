@@ -15,6 +15,7 @@ This document provides a comprehensive guide to all available endpoints in the H
 4. Hackathon Administration
 5. System Management
 6. Utilities
+7. Things you have to do in the django admin portal
 
 ---
 
@@ -810,3 +811,14 @@ This document provides a comprehensive guide to all available endpoints in the H
 - All dates are in ISO format
 - All times are in seconds
 - The API follows RESTful principles but uses POST for all endpoints for consistency
+
+## 7. Things you have to do in the django admin portal
+### 7.1 Open the django admin portal: http://localhost:8000/admin
+
+When running the project during the actual hackathon (or when the frontend and backend are ran on different devices), you will have to replace the localhost part with the ipv4 address of that device on that network
+
+### 7.2 Things you have to use the django portal for
+
+After you start a hackathon, you can not delete any question. I suggest you familiarise yourself with the django admin portal for finetunned control (and specifically, the hackathon settings or removing participants).
+
+If you start and end the hackathon as well, the questions can not be deleted. Either reset the current hackathon (DO NOT ON THE ACTUAL HACKATHON DAY) or uncheck the has_ended field in the hackathon settings in the django admin portal.

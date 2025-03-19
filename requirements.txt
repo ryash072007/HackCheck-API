@@ -1,0 +1,8 @@
+# Core Django components
+Django==5.1.7
+djangorestframework==3.14.0
+djangorestframework-simplejwt==5.2.2
+
+# CORS support
+django-cors-headers==4.3.0
+
