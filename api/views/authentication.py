@@ -59,11 +59,6 @@ class TeamSignIn(APIView):
         existing = TeamMember.objects.filter(team=team, name=participant_name).exists()
 
         hackathon_settings = HackathonSettings.get_instance()
-        if not hackathon_settings.has_started:
-            return Response(
-                {"error": "Hackathon has not started yet"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
 
         # Check team size limit if this is a new participant
         if (
