@@ -834,11 +834,20 @@ This document provides a comprehensive guide to all available endpoints in the H
 - The API follows RESTful principles but uses POST for all endpoints for consistency
 
 ## 7. Things you have to do in the django admin portal
-### 7.1 Open the django admin portal: http://localhost:8000/admin
+
+### 7.1 Creating a Superuser
+
+Before you can access the Django admin portal, you need to create a superuser account. Run the following command in your terminal:
+
+```bash
+python manage.py createsuperuser
+```
+
+### 7.2 Open the django admin portal: http://localhost:8000/admin
 
 When running the project during the actual hackathon (or when the frontend and backend are ran on different devices), you will have to replace the localhost part with the ipv4 address of that device on that network
 
-### 7.2 Things you have to use the django portal for
+### 7.3 Things you have to use the django portal for
 
 After you start a hackathon, you can not delete any question. I suggest you familiarise yourself with the django admin portal for finetunned control (and specifically, the hackathon settings or removing participants).
 
