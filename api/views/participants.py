@@ -114,3 +114,25 @@ class SubmitAnswer(APIView):
             {"message": "Answer submitted successfully."},
             status=status.HTTP_200_OK,
         )
+
+class CheckHackathonStatus(APIView):
+    """
+    Check the status of the hackathon.
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        """
+        Check the status of the hackathon.
+        """
+
+        hackathon_settings = HackathonSettings.get_instance()
+        return Response(
+            {
+                "has_started": hackathon_settings.has_started,
+                "has_ended": hackathon_settings.has_ended,
+                "is_paused": hackathon_settings.is_paused,
+            },
+            status=status.HTTP_200_OK,
+        )

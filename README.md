@@ -647,6 +647,27 @@ This document provides a comprehensive guide to all available endpoints in the H
 - `400 Bad Request` - max_participants is required
 - `403 Forbidden` - Not an admin user
 
+### 4.8. Check Hackathon Status
+
+**Endpoint:** `/check_hackathon_status/`  
+**Method:** POST  
+**Authentication:** Team or Admin JWT token  
+**Description:** Checks the current status of the hackathon.
+
+**Request Body:** None required
+
+**Response:**
+```json
+{
+  "has_started": true,
+  "has_ended": false,
+  "is_paused": false
+}
+```
+
+**Error Responses:**
+- `403 Forbidden` - Invalid or missing authentication token
+
 ---
 
 ## 5. System Management
