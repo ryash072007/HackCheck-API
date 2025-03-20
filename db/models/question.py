@@ -60,7 +60,7 @@ class Answer(models.Model):
     answer_code = models.TextField()
     is_correct_answer = models.BooleanField(default=False)
     score = models.IntegerField(default=0)
-    time_submitted = models.DateTimeField(auto_now_add=True)
+    time_submitted = models.DateTimeField()
     team_member = models.ForeignKey(
         TeamMember, on_delete=models.CASCADE, related_name="answers"
     )

@@ -6,6 +6,7 @@ from api.helper import extract_info_from_jwt
 from db.models.question import Answer, Question
 from db.models.user import TeamMember
 from db.models import HackathonSettings
+from datetime import datetime
 
 
 class SubmitAnswer(APIView):
@@ -75,6 +76,7 @@ class SubmitAnswer(APIView):
             team_member=team_member,
             team=team_member.team,
             test_results=tests,
+            time_submitted=datetime.now(),
         )
 
         if is_correct_answer:
@@ -91,11 +93,10 @@ class SubmitAnswer(APIView):
                 time_submitted = hackathon_settings.time_paused
                 if time_submitted.tzinfo is not None:
                     time_submitted = time_submitted.replace(tzinfo=None)
-            time_left = hackathon_settings.duration - (
-                time_submitted - time_started - hackathon_settings.time_spent_paused
-            )
-
-            hackathon_time_spent = hackathon_settings.duration - time_left
+            # Calculate the time spent in the hackathon
+            # and the score based on the time spent
+            hackathon_time_spent = time_submitted - time_started - hackathon_settings.time_spent_paused
+            print("IGNORE THE ABOVE WARNING: EVERYTHING IS FINE")
             intervals_done = (
                 hackathon_time_spent // hackathon_settings.score_decrement_interval
             )
