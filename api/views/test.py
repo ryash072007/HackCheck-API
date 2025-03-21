@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -38,3 +39,6 @@ class TestAuthenticationView(APIView):
             )
 
         return Response(response_data, status=status.HTTP_200_OK)
+
+def custom_404_view(request, exception=None):
+    return render(request, "404.html", status=404)
