@@ -42,7 +42,7 @@ echo.
 echo [IMPORTANT] For Frontend Configuration
 echo.
 echo   Configure the frontend with:
-echo   API_BASE_URL = "http://%IP%:8000"
+echo   API_BASE_URL = "http://%IP%:8000/"
 echo   in utils -> api.js
 echo.
 echo [SERVER URL] http://%IP%:8000
