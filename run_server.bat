@@ -9,12 +9,17 @@ echo.
 echo [===== HackCheck API Server Launcher =====]
 echo.
 
-REM Activate the virtual environment
-echo [INFO] Activating virtual environment...
-call .\.venv\Scripts\activate.bat || (
-    echo [ERROR] Failed to activate virtual environment.
-    echo         Make sure .venv directory exists.
-    goto :error
+REM Check if virtual environment exists
+if exist ".\.venv\Scripts\activate.bat" (
+    REM Activate the virtual environment
+    echo [INFO] Activating virtual environment...
+    call .\.venv\Scripts\activate.bat || (
+        echo [WARNING] Failed to activate virtual environment, falling back to global Python.
+        set "USE_GLOBAL=1"
+    )
+) else (
+    echo [INFO] Virtual environment not found, using global Python installation.
+    set "USE_GLOBAL=1"
 )
 
 REM Get the IP address
@@ -60,8 +65,10 @@ REM Server was stopped
 echo.
 echo [INFO] Server has been stopped.
 
-REM Deactivate the virtual environment
-call deactivate
+REM Deactivate the virtual environment only if we used it
+if not defined USE_GLOBAL (
+    call deactivate
+)
 goto :end
 
 :error
