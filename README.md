@@ -529,15 +529,35 @@ This document provides a comprehensive guide to all available endpoints in the H
 **Response:**
 ```json
 {
-  "message": "Shared code saved successfully."
+  "message": "Shared code saved successfully.",
+  "static_file": "http://192.168.1.100:8000/saved_codes/UUID.py"
 }
 ```
 
 **Error Responses:**
 - `400 Bad Request` - Missing 'shared_code' in request body
 - `400 Bad Request` - Missing 'question_number' in request body
-- `403 Forbidden` - Not an admin user
+- `403 Forbidden` - Not authorized
 - `404 Not Found` - Question does not exist
+
+### 3.8. Get Shared Code
+
+**Endpoint:** `/saved_codes/<uuid>.py`  
+**Method:** GET  
+**Authentication:** None required  
+**Description:** Retrieves a previously saved Python code file for sharing between team members.
+
+**URL Parameters:**
+- The UUID and filename are generated automatically when shared code is saved
+
+**Response:**
+- The Python file content with appropriate mime-type
+- Or a 404 page if the file doesn't exist
+
+**Notes:**
+- Files are served from the server's filesystem
+- Only .py files are allowed to be served through this endpoint
+
 ---
 
 ## 4. Hackathon Administration

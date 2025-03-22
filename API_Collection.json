@@ -6078,7 +6078,7 @@
 						"in": "header"
 					},
 					"bearer": {
-						"key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQyNjg2MTE5LCJpYXQiOjE3NDI2NzUzMTksImp0aSI6IjJmZGEzM2NhMjM3ZTQ5OGRhYWYxOTZiM2M2NWU5MmViIiwidXNlcl9pZCI6NiwidGVhbV9pZCI6MywidGVhbV9uYW1lIjoiQmhhdmFucyAwMyIsInBhcnRpY2lwYW50X2lkIjo3LCJwYXJ0aWNpcGFudF9uYW1lIjoiWWFzaCJ9.ySCoc-mRQQxmd0KCLn7gXyMV_Zw1_woMiEL2syOzwmI"
+						"key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQyNjk3NDgzLCJpYXQiOjE3NDI2ODY2ODMsImp0aSI6ImU2NjFiZjI3Mjc2MjQ4OGRhNjJiYWZiYTFhYmY3NzQwIiwidXNlcl9pZCI6NiwidGVhbV9pZCI6MywidGVhbV9uYW1lIjoiQmhhdmFucyAwMyIsInBhcnRpY2lwYW50X2lkIjo3LCJwYXJ0aWNpcGFudF9uYW1lIjoiWWFzaCJ9.cVsln7JqRzLxpelx_3KwSqoQSV5YwgraxIr9k3mnMlI"
 					},
 					"basic": {
 						"username": "",

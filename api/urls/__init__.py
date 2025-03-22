@@ -7,7 +7,6 @@ from .participants import urlpatterns as participants_urlpatterns
 from .admin import urlpatterns as admin_urlpatterns
 from .team import urlpatterns as team_urlpatterns
 from .hackathon import urlpatterns as hackathon_urlpatterns
-from api.views.test import custom_404_view
 
 urlpatterns = [
     *authentication_urlpatterns,
@@ -17,5 +16,4 @@ urlpatterns = [
     *admin_urlpatterns,
     *team_urlpatterns,
     *hackathon_urlpatterns,
-    re_path(r".*", custom_404_view),  # Catch-all for 404 errors
 ]

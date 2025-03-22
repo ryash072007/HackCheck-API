@@ -1,3 +1,6 @@
+from django.conf import settings
+
+
 def name_similarity(name1, name2, threshold=0.8):
     """
     Compare two names and determine if they are similar.
@@ -72,3 +75,16 @@ def extract_info_from_jwt(request):
         response_data["is_admin"] = True
 
     return response_data
+
+def get_uuid_path(file_uuid):
+    """
+    Get the file path for a given UUID.
+
+    Args:
+        file_uuid (str): The UUID of the file.
+
+    Returns:
+        str: The file path.
+    """
+    
+    return f"http://{settings.IP}:{settings.PORT}/saved_codes/{file_uuid}.py"

@@ -6,7 +6,7 @@ from db.models import Question
 from db.models.question import Answer, SharedCode
 from db.models.user import TeamProfile, TeamMember
 from rest_framework.permissions import IsAuthenticated
-from api.helper import extract_info_from_jwt
+from api.helper import extract_info_from_jwt, get_uuid_path
 
 
 class GetTeamPoints(APIView):
@@ -292,6 +292,23 @@ class SaveSharedCode(APIView):
 
 
 class GetSharedCode(APIView):
+    """
+    Retrieve shared code entries for the authenticated user's team.
+    This view allows team members to fetch all code that has been shared within their team.
+    The shared code entries are ordered by time shared (most recent first).
+    Methods:
+        post: Retrieve all shared code entries for the authenticated user's team.
+    Authentication:
+        Requires a valid JWT token from an authenticated user.
+    Response:
+        200 OK: Returns a list of shared code entries with the following information for each:
+            - code: The shared code content
+            - question_number: The question number the code is associated with
+            - time_shared: The time when the code was shared (HH:MM:SS format)
+            - team_member_name: Name of the team member who shared the code
+            - static_file: Path to any associated static file
+        404 NOT FOUND: If no shared code entries exist for the team
+    """
 
     permission_classes = [IsAuthenticated]
 
@@ -309,6 +326,7 @@ class GetSharedCode(APIView):
                     "question_number": sc.question.number,
                     "time_shared": sc.time_shared.strftime("%H:%M:%S"),
                     "team_member_name": sc.team_member.name,
+                    "static_file": get_uuid_path(sc.file_uuid),
                 })
             
             return Response(
