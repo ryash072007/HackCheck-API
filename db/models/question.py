@@ -74,3 +74,23 @@ class Answer(models.Model):
 
     def __str__(self):
         return f"{self.question.number} - {self.team_member.team.team_name} - {self.time_submitted}"
+
+class SharedCode(models.Model):
+    """
+    Model to store shared code between team members.
+    """
+
+    team = models.ForeignKey(
+        TeamProfile, on_delete=models.CASCADE, related_name="shared_code"
+    )
+    code = models.TextField()
+    question = models.ForeignKey(
+        Question, on_delete=models.CASCADE, related_name="shared_code"
+    )
+    time_shared = models.DateTimeField()
+    team_member = models.ForeignKey(
+        TeamMember, on_delete=models.CASCADE, related_name="shared_code"
+    )
+
+    def __str__(self):
+        return f"{self.team.team_name} - {self.question.title} - {self.time_shared}"
