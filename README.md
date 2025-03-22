@@ -215,6 +215,24 @@ This document provides a comprehensive guide to all available endpoints in the H
 **Error Responses:**
 - `403 Forbidden` - Not an admin user
 
+### 2.5. Get Team Participants Names
+
+**Endpoint:** `/get_team_participants_names/`  
+**Method:** POST  
+**Authentication:** Team JWT token  
+**Description:** Retrieves the names of all participants in the authenticated user's team.
+
+**Response:**
+```json
+{
+  "participants": ["Participant Name 1", "Participant Name 2", "..."]
+}
+```
+
+**Error Responses:**
+- `200 OK` - Successfully retrieved participants names
+- `401 Unauthorized` - Authentication credentials were not provided or are invalid
+
 ---
 
 ## 3. Questions and Answers

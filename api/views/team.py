@@ -199,3 +199,22 @@ class GetSingleQuestion(APIView):
             },
             status=status.HTTP_200_OK,
         )
+
+class GetTeamParticipantsNames(APIView):
+    """
+    Get the names of all participants in a team.
+    This endpoint returns the names of all participants in a team.
+    Returns:
+        Response: A JSON object with a 'participants' array containing the names of the participants.
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        participant_data = extract_info_from_jwt(request)
+        team_id = participant_data["participant"]["team_id"]
+        team = TeamProfile.objects.get(id=team_id)
+
+        participants = TeamMember.objects.filter(team=team).values_list("name", flat=True)
+
+        return Response({"participants": list(participants)}, status=status.HTTP_200_OK)
