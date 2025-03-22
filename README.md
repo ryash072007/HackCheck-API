@@ -511,6 +511,33 @@ This document provides a comprehensive guide to all available endpoints in the H
 - `400 Bad Request` - This question has already been answered correctly
 - `404 Not Found` - Question does not exist
 
+### 3.7. Save Shared Code
+
+**Endpoint:** `/save_shared_code/`  
+**Method:** POST  
+**Authentication:** Team JWT token  
+**Description:** Saves shared code for a team's question to enable collaboration between team members.
+
+**Request Body:**
+```json
+{
+  "question_number": 1,
+  "shared_code": "function solution(input) {\n  // Code implementation here\n  return result;\n}"
+}
+```
+
+**Response:**
+```json
+{
+  "message": "Shared code saved successfully."
+}
+```
+
+**Error Responses:**
+- `400 Bad Request` - Missing 'shared_code' in request body
+- `400 Bad Request` - Missing 'question_number' in request body
+- `403 Forbidden` - Not an admin user
+- `404 Not Found` - Question does not exist
 ---
 
 ## 4. Hackathon Administration

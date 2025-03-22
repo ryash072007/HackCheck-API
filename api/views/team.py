@@ -1,8 +1,9 @@
+from datetime import datetime
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from db.models import Question
-from db.models.question import Answer
+from db.models.question import Answer, SharedCode
 from db.models.user import TeamProfile, TeamMember
 from rest_framework.permissions import IsAuthenticated
 from api.helper import extract_info_from_jwt
@@ -18,7 +19,14 @@ class GetTeamPoints(APIView):
         if team_id is None or team_id == "ALL":
             teams = TeamProfile.objects.all().order_by("-score")
             data = [
-                {"id": team.id, "team_name": team.team_name, "score": team.score, "participants": TeamMember.objects.filter(team=team).values_list("name", flat=True)}
+                {
+                    "id": team.id,
+                    "team_name": team.team_name,
+                    "score": team.score,
+                    "participants": TeamMember.objects.filter(team=team).values_list(
+                        "name", flat=True
+                    ),
+                }
                 for team in teams
             ]
             return Response({"teams": data}, status=status.HTTP_200_OK)
@@ -200,6 +208,7 @@ class GetSingleQuestion(APIView):
             status=status.HTTP_200_OK,
         )
 
+
 class GetTeamParticipantsNames(APIView):
     """
     Get the names of all participants in a team.
@@ -215,6 +224,68 @@ class GetTeamParticipantsNames(APIView):
         team_id = participant_data["participant"]["team_id"]
         team = TeamProfile.objects.get(id=team_id)
 
-        participants = TeamMember.objects.filter(team=team).values_list("name", flat=True)
+        participants = TeamMember.objects.filter(team=team).values_list(
+            "name", flat=True
+        )
 
         return Response({"participants": list(participants)}, status=status.HTTP_200_OK)
+
+
+class SaveSharedCode(APIView):
+    """
+    API endpoint for saving shared code for a team's question.
+    This view allows authenticated team members to save shared code related to a specific question.
+    The team ID and participant information are extracted from the JWT token in the request.
+    Request body must include:
+        - shared_code: The code to be shared
+        - question_id: The ID of the question the code relates to
+        Response: A JSON object with a 'message' indicating success, or an 'error' message
+                  with appropriate HTTP status code if the request is invalid.
+    Status codes:
+        - 200 OK: Code successfully saved
+        - 400 BAD REQUEST: Missing required fields in request body
+        - 404 NOT FOUND: Specified question does not exist
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        participant_data = extract_info_from_jwt(request)
+        team_id = participant_data["participant"]["team_id"]
+        team = TeamProfile.objects.get(id=team_id)
+        partipant = TeamMember.objects.get(
+            id=participant_data["participant"]["id"], team=team
+        )
+
+        shared_code = request.data.get("shared_code", None)
+        if not shared_code:
+            return Response(
+                {"error": "Missing 'shared_code' in request body."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        question_number = request.data.get("question_number", None)
+        if not question_number:
+            return Response(
+                {"error": "Missing 'question_id' in request body."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        try:
+            question = Question.objects.get(number=question_number)
+        except Question.DoesNotExist:
+            return Response(
+                {"error": f"Question does not exist."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        SharedCode.objects.create(
+            team=team,
+            code=shared_code,
+            question=question,
+            time_shared=datetime.now(),
+            team_member=partipant,
+        )
+
+        return Response(
+            {"message": "Shared code saved successfully."}, status=status.HTTP_200_OK
+        )
