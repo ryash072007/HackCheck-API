@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.db import models
 from .user import TeamMember, TeamProfile
-
+import uuid
 
 class Question(models.Model):
     """
@@ -91,6 +91,13 @@ class SharedCode(models.Model):
     team_member = models.ForeignKey(
         TeamMember, on_delete=models.CASCADE, related_name="shared_code"
     )
+
+    file_uuid = models.UUIDField(default=uuid.uuid4, null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        with open(f"static/{self.file_uuid}.py", "w") as f:
+            f.write(self.code)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.team.team_name} - {self.question.title} - {self.time_shared}"
