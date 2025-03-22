@@ -289,3 +289,34 @@ class SaveSharedCode(APIView):
         return Response(
             {"message": "Shared code saved successfully."}, status=status.HTTP_200_OK
         )
+
+
+class GetSharedCode(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        participant_data = extract_info_from_jwt(request)
+        team_id = participant_data["participant"]["team_id"]
+        team = TeamProfile.objects.get(id=team_id)
+
+        shared_code = SharedCode.objects.filter(team=team)
+        if shared_code:
+            shared_codes_data = []
+            for sc in SharedCode.objects.filter(team=team).order_by('-time_shared'):
+                shared_codes_data.append({
+                    "code": sc.code,
+                    "question_number": sc.question.number,
+                    "time_shared": sc.time_shared.strftime("%H:%M:%S"),
+                    "team_member_name": sc.team_member.name,
+                })
+            
+            return Response(
+                {"shared_codes": shared_codes_data},
+                status=status.HTTP_200_OK,
+            )
+        else:
+            return Response(
+                {"message": "No shared code found for this question."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
