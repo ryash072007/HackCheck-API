@@ -12,13 +12,14 @@ from db.models import (
     Account,
     HackathonSettings,
 )
+from db.models.question import SharedCode
 
 
 class ResetHackathonDatabase(APIView):
     """
     Admin endpoint to reset all hackathon data.
-    This clears all team profiles, members, questions, answers, and non-admin accounts.
-    Admin accounts are preserved.
+    This clears all team profiles, members, questions, answers, saved code, and non-admin accounts.
+    Admin accounts are preserved. Also resets hackathon settings to default values.
 
     Requires admin authentication.
     """
@@ -38,6 +39,10 @@ class ResetHackathonDatabase(APIView):
                 # Delete all answers first (to respect foreign key constraints)
                 answer_count = Answer.objects.all().count()
                 Answer.objects.all().delete()
+                
+                # Delete all saved code
+                saved_code_count = SharedCode.objects.all().count()
+                SharedCode.objects.all().delete()
 
                 # Delete all questions
                 question_count = Question.objects.all().count()
@@ -60,6 +65,16 @@ class ResetHackathonDatabase(APIView):
                 # Delete any remaining non-admin accounts
                 non_admin_accounts.delete()
 
+                # Reset hackathon settings
+                hackathon_settings = HackathonSettings.get_instance()
+                hackathon_settings.has_started = False
+                hackathon_settings.has_ended = False
+                hackathon_settings.time_started = None
+                hackathon_settings.time_paused = None
+                hackathon_settings.is_paused = False
+                hackathon_settings.time_spent_paused = timedelta(seconds=0)
+                hackathon_settings.save()
+
                 return Response(
                     {
                         "message": "Database successfully reset for new hackathon",
@@ -69,6 +84,7 @@ class ResetHackathonDatabase(APIView):
                             "members": member_count,
                             "questions": question_count,
                             "answers": answer_count,
+                            "saved_code": saved_code_count,
                         },
                     },
                     status=status.HTTP_200_OK,
@@ -640,6 +656,7 @@ class ResetCurrentHackathon(APIView):
         hacathon_settings.time_spent_paused = timedelta(seconds=0)
         hacathon_settings.save()
 
+        SharedCode.objects.all().delete()
         Answer.objects.all().delete()
         TeamProfile.objects.all().update(score=0, participants_registered=0)
 
