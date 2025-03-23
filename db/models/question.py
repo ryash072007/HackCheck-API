@@ -1,3 +1,5 @@
+import os
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 from .user import TeamMember, TeamProfile
@@ -95,7 +97,7 @@ class SharedCode(models.Model):
     file_uuid = models.UUIDField(default=uuid.uuid4, null=True, blank=True)
 
     def save(self, *args, **kwargs):
-        with open(f"static/{self.file_uuid}.py", "w") as f:
+        with open(os.path.join(settings.MEDIA_ROOT, f"{self.file_uuid}.py"), "w") as f:
             f.write(self.code)
         super().save(*args, **kwargs)
 
