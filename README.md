@@ -558,6 +558,25 @@ This document provides a comprehensive guide to all available endpoints in the H
 - Files are served from the server's filesystem
 - Only .py files are allowed to be served through this endpoint
 
+### 3.9. Clear All Shared Code
+
+**Endpoint:** `/clear_all_shared_code/`  
+**Method:** POST  
+**Authentication:** Team JWT token  
+**Description:** Clears all shared code entries for the authenticated user's team.
+
+**Request Body:** None required
+
+**Response:**
+```json
+{
+  "message": "Shared code cleared successfully."
+}
+```
+
+**Error Responses:**
+- `401 Unauthorized` - Not authenticated or invalid token
+
 ---
 
 ## 4. Hackathon Administration

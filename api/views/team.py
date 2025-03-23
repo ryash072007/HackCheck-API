@@ -338,3 +338,29 @@ class GetSharedCode(APIView):
                 {"message": "No shared code found for this question."},
                 status=status.HTTP_404_NOT_FOUND,
             )
+
+class ClearAllSharedCode(APIView):
+    """
+    API endpoint for clearing all shared code for a team's question.
+    This view allows authenticated team members to clear all shared code.
+    The team ID and participant information are extracted from the JWT token in the request.
+    Response: A JSON object with a 'message' indicating success, or an 'error' message
+          with appropriate HTTP status code if the request is invalid.
+    Status codes:
+        - 200 OK: Code successfully cleared
+        - 401 UNAUTHORIZED: User is not authenticated
+        - 500 INTERNAL SERVER ERROR: Error occurred while clearing shared code
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        participant_data = extract_info_from_jwt(request)
+        team_id = participant_data["participant"]["team_id"]
+        team = TeamProfile.objects.get(id=team_id)
+
+        SharedCode.objects.filter(team=team).delete()
+
+        return Response(
+            {"message": "Shared code cleared successfully."}, status=status.HTTP_200_OK
+        )

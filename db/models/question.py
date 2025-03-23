@@ -2,6 +2,8 @@ import os
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.dispatch import receiver
+from django.db.models.signals import pre_delete
 from .user import TeamMember, TeamProfile
 import uuid
 
@@ -103,3 +105,13 @@ class SharedCode(models.Model):
 
     def __str__(self):
         return f"{self.team.team_name} - {self.question.title} - {self.time_shared}"
+
+@receiver(pre_delete, sender=SharedCode)
+def delete_shared_code_file(sender, instance, **kwargs):
+    """Delete the file when SharedCode instance is deleted in bulk operations."""
+    file_path = os.path.join(settings.MEDIA_ROOT, f"{instance.file_uuid}.py")
+    try:
+        if os.path.exists(file_path):
+            os.remove(file_path)
+    except OSError as e:
+        print(f"Error deleting file {file_path}: {e}")
