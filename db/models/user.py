@@ -33,6 +33,10 @@ class TeamProfile(models.Model):
 
     class Meta:
         ordering = ["-score"]
+        indexes = [
+            models.Index(fields=['team_name']),
+            models.Index(fields=['team_password']),
+        ]
 
     def __str__(self):
         return self.team_name
@@ -49,6 +53,12 @@ class TeamMember(models.Model):
     )
     name = models.CharField(max_length=100)
     joined_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-joined_at"]
+        indexes = [
+            models.Index(fields=['team']),
+        ]
 
     def __str__(self):
         return f"{self.name} ({self.team.team_name})"
