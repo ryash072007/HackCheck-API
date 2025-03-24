@@ -104,7 +104,7 @@ WSGI_APPLICATION = "HackCheckAPI.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join("/tmp", "db.sqlite3"),
+        "NAME": "sqlitecloud://ccuznc4tnz.g4.sqlite.cloud:8860/HackCheck?apikey=hdYXkisY68Llr1Uvtziyw6bRcbWNotHhsfxomMDbZms",
     }
 }
 
