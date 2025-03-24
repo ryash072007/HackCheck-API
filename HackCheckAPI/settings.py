@@ -148,6 +148,7 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 # MEDIA_URL = "saved_codes/"
 # MEDIA_ROOT = os.path.join(BASE_DIR, MEDIA_URL.strip('/'))
 # os.makedirs(MEDIA_ROOT, exist_ok=True)
