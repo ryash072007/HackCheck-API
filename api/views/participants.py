@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from api.helper import extract_info_from_jwt
 from db.models.question import Answer, Question
-from db.models.user import TeamMember
+from db.models.user import TeamMember, TeamProfile
 from db.models import HackathonSettings
 from datetime import datetime
 
@@ -23,7 +23,6 @@ class SubmitAnswer(APIView):
         """
         Submit answer for a question in a quiz.
         """
-
         hackathon_settings = HackathonSettings.get_instance()
         if not hackathon_settings.has_started:
             return Response(
@@ -60,14 +59,19 @@ class SubmitAnswer(APIView):
             )
 
         question = Question.objects.get(number=question_num)
+
+        participant_data = extract_info_from_jwt(request)
+        team_id = participant_data["participant"]["team_id"]
+        team = TeamProfile.objects.get(id=team_id)
+
         # Check if an answer for this question is already marked as correct
-        if Answer.objects.filter(question=question, is_correct_answer=True).exists():
+        if Answer.objects.filter(question=question, is_correct_answer=True, team=team).exists():
             return Response(
                 {"error": "This question has already been answered correctly."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        team_member = TeamMember.objects.get(id=request_data["participant"]["id"])
+        team_member = TeamMember.objects.get(id=participant_data["participant"]["id"])
 
         answer = Answer.objects.create(
             question=question,
