@@ -103,8 +103,8 @@ WSGI_APPLICATION = "HackCheckAPI.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": "sqlitecloud://ccuznc4tnz.g4.sqlite.cloud:8860/HackCheck?apikey=hdYXkisY68Llr1Uvtziyw6bRcbWNotHhsfxomMDbZms",
+        "ENGINE": "libsql.db.backends.sqlite3",
+        "NAME": "libsql://hackcheckapi-ryash072007.turso.io?authToken=eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3NDI4MjQwMTQsImlkIjoiNGEzYTRiNmUtOGI2Ny00NTU0LWE3NjQtNWViM2M0NmUyYTdkIiwicmlkIjoiOWY1YzU1ZjAtMjA0Yi00N2EyLTk0MmEtN2Q3NzE2MWU1NWY0In0.ScydrYVlRHqJeMAIV5KMzKYSZuwPo71jkud5nZZjwiJ07N-SRBN9l1HfjrX0IYDozm3m0GDU9ILcKlFis33-Aw"
     }
 }
 
