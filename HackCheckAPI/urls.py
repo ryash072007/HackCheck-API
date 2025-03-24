@@ -24,18 +24,8 @@ from api.views import custom_404_view
 from .views import custom_media_serve
 
 
-urlpatterns = (
-    [
-        path("admin/", admin.site.urls),
-        path("", include("api.urls")),
-    ]
-    + [
-        re_path(
-            f'^{settings.MEDIA_URL.lstrip("/")}(?P<path>.+.py)$',
-            custom_media_serve,
-        )
-    ]
-    + [
-        re_path(r".*", custom_404_view),
-    ]
-)
+urlpatterns = [
+    path("admin/", admin.site.urls),
+    path("", include("api.urls")),
+    re_path(r".*", custom_404_view),
+]

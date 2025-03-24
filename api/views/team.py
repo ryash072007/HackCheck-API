@@ -7,7 +7,7 @@ from db.models.question import Answer, SharedCode
 from db.models.user import TeamProfile, TeamMember
 from rest_framework.permissions import IsAuthenticated
 from api.helper import extract_info_from_jwt, get_uuid_path
-
+from django.http import StreamingHttpResponse
 
 class GetTeamPoints(APIView):
     """ "
@@ -364,3 +364,51 @@ class ClearAllSharedCode(APIView):
         return Response(
             {"message": "Shared code cleared successfully."}, status=status.HTTP_200_OK
         )
+
+class ServeSharedCode(APIView):
+    """
+    Serve the shared code for a particular UUID.
+    This view allows authenticated team members to retrieve the shared code for a specific UUID.
+    The team ID and participant information are extracted from the JWT token in the request.
+    Request body must include:
+        - UUID: The UUID of the shared code
+    Response: A response that acts as a file download for the shared code.
+    Status codes:
+        - 200 OK: Code successfully retrieved
+        - 400 BAD REQUEST: Missing required fields in request body
+        - 404 NOT FOUND: No shared code found
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, UUID):
+        participant_data = extract_info_from_jwt(request)
+        team_id = participant_data["participant"]["team_id"]
+        team = TeamProfile.objects.get(id=team_id)
+
+        if not UUID:
+            return Response(
+                {"error": "Missing 'UUID' in request body."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            shared_code = SharedCode.objects.get(file_uuid=UUID, team=team)
+        except SharedCode.DoesNotExist:
+            return Response(
+                {"error": f"UUID does not exist or does not belong to this team."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        def file_generator():
+            """
+            Generator that streams the code in chunks.
+            """
+            for i in range(0, len(shared_code.code), 1024):  # 1KB chunks
+                yield shared_code.code[i : i + 1024]
+        
+        response = StreamingHttpResponse(file_generator(), content_type="text/plain")
+        response["Content-Disposition"] = f'attachment; filename="{UUID}.py"'
+        response["Content-Length"] = len(shared_code.code)
+
+        return response

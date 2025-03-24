@@ -31,7 +31,7 @@ SECRET_KEY = "django-insecure-!$dd+3iyptffqf5mp((rnu@rn=x)y(y1z5u8-lhl_&!pqzxq+c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-NGROK_URL = None #"https://whippet-guided-adequately.ngrok-free.app" # Set with None if not using ngrok
+URL = None #"https://whippet-guided-adequately.ngrok-free.app" # Set with None if not using ngrok
 
 # Application definition
 
@@ -136,16 +136,16 @@ TIME_ZONE = "UTC"
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = "static/"
-MEDIA_URL = "saved_codes/"
-MEDIA_ROOT = os.path.join(BASE_DIR, MEDIA_URL.strip('/'))
-os.makedirs(MEDIA_ROOT, exist_ok=True)
+# MEDIA_URL = "saved_codes/"
+# MEDIA_ROOT = os.path.join(BASE_DIR, MEDIA_URL.strip('/'))
+# os.makedirs(MEDIA_ROOT, exist_ok=True)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

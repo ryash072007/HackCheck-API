@@ -87,7 +87,7 @@ def get_uuid_path(file_uuid):
         str: The file path.
     """
     
-    if settings.NGROK_URL:
-        return f"{settings.NGROK_URL}/saved_codes/{file_uuid}.py"
+    if settings.URL:
+        return f"{settings.URL}/saved_codes/{file_uuid}/"
 
-    return f"http://{settings.IP}:{settings.PORT}/saved_codes/{file_uuid}.py"
+    return f"http://{settings.IP}:{settings.PORT}/saved_codes/{file_uuid}/"
