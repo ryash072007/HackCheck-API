@@ -15,6 +15,8 @@ import os
 from pathlib import Path
 from os import environ
 import socket
+from django.core.management import call_command
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -103,7 +105,7 @@ WSGI_APPLICATION = "HackCheckAPI.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": os.path.join("/tmp", "db.sqlite3"),
     }
 }
 
@@ -161,3 +163,6 @@ REST_FRAMEWORK = {
         "api.authentication.TeamParticipantAuthentication",
     ),
 }
+
+# Apply all migrations
+call_command("migrate")
