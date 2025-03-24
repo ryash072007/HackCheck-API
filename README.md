@@ -3,6 +3,10 @@
 
  Frontend Link: https://github.com/Gopesh456/HackCheck-UI
 
+# HackCheck Database Setup
+
+![HackCheck Database Visualiser](<GitHub Files/Database Visualiser.png>)
+
 # HackCheck API Documentation
 
 This document provides a comprehensive guide to all available endpoints in the HackCheck-API project. For each endpoint, you'll find information about required authentication, input parameters, and expected responses.
