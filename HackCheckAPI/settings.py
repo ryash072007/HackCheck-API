@@ -32,7 +32,7 @@ SECRET_KEY = "django-insecure-!$dd+3iyptffqf5mp((rnu@rn=x)y(y1z5u8-lhl_&!pqzxq+c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-URL = None #"https://whippet-guided-adequately.ngrok-free.app" # Set with None if not using ngrok
+URL = "https://ackheck--ryash0720072806-0dcew4r3.leapcell.dev" #"https://whippet-guided-adequately.ngrok-free.app" # Set with None if not using ngrok
 
 # Application definition
 
