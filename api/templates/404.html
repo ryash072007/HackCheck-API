@@ -3,162 +3,600 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Access Denied | 404</title>
+    <title>404 - HackCheck</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #10b981;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            background-color: var(--dark);
+            color: var(--light);
             height: 100vh;
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            overflow: hidden;
-        }
-        .container {
-            text-align: center;
-            background-color: rgba(0, 0, 0, 0.7);
-            padding: 3rem;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            max-width: 600px;
             position: relative;
-            z-index: 1;
-            animation: fadeIn 0.8s ease-in-out;
         }
-        h1 {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-        }
-        .error-code {
-            font-size: 8rem;
-            font-weight: bold;
-            color: #ff4757;
-            margin-bottom: 1rem;
-            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.4);
-        }
-        p {
-            font-size: 1.2rem;
-            margin-bottom: 1.5rem;
-            line-height: 1.6;
-        }
-        .warning {
-            color: #ffcc00;
-            font-weight: bold;
-            font-size: 1.3rem;
-            margin-top: 1rem;
-            margin-bottom: 1.5rem;
-        }
-        .home-button {
-            background-color: #2980b9;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            font-size: 1rem;
-            border-radius: 30px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 1rem;
-        }
-        .home-button:hover {
-            background-color: #3498db;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-        .particles {
+        
+        .matrix-bg {
             position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+            z-index: 0;
+        }
+        
+        .terminal {
+            position: relative;
+            z-index: 10;
+            background-color: rgba(15, 23, 42, 0.85);
+            width: 90%;
+            max-width: 800px;
+            border-radius: 10px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+            overflow: hidden;
+            transform: perspective(1000px) rotateX(0deg);
+            transition: transform 0.5s ease;
+            backdrop-filter: blur(10px);
+            animation: terminal-startup 0.8s ease-out;
+        }
+        
+        .terminal:hover {
+            transform: perspective(1000px) rotateX(2deg) scale(1.02);
+        }
+        
+        .terminal-header {
+            background: linear-gradient(to right, #1e293b, #334155);
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #475569;
+        }
+        
+        .terminal-title {
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .terminal-title i {
+            color: var(--secondary);
+        }
+        
+        .terminal-controls {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .control {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .control.close {
+            background-color: var(--danger);
+        }
+        
+        .control.minimize {
+            background-color: var(--warning);
+        }
+        
+        .control.maximize {
+            background-color: var(--secondary);
+        }
+        
+        .terminal-body {
+            padding: 30px;
+            min-height: 400px;
+        }
+        
+        .typed-text {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            opacity: 0;
+            animation: fade-in 0.5s forwards;
+            animation-delay: 0.5s;
+        }
+        
+        .command-line {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        
+        .prompt {
+            color: var(--secondary);
+            margin-right: 10px;
+        }
+        
+        .command {
+            color: var(--light);
+        }
+        
+        .error-output {
+            color: var(--danger);
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 20px 0;
+            text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+            animation: glitch 1s infinite alternate-reverse;
+        }
+        
+        .error-details {
+            color: var(--light);
+            margin-bottom: 20px;
+            opacity: 0;
+            animation: fade-in 0.5s forwards;
+            animation-delay: 1s;
+        }
+        
+        .credits {
+            margin-top: 30px;
+            font-size: 0.8rem;
+            opacity: 0.7;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 15px;
+            text-align: center;
+            opacity: 0;
+            animation: fade-in 0.5s forwards;
+            animation-delay: 2s;
+        }
+        
+        .credits a {
+            color: var(--secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .credits a:hover {
+            color: var(--light);
+            text-decoration: underline;
+        }
+        
+        .options {
+            margin-top: 40px;
+            opacity: 0;
+            animation: fade-in 0.5s forwards;
+            animation-delay: 1.5s;
+        }
+        
+        .button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background-color: var(--primary);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        
+        .button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
             width: 100%;
             height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
         }
+        
+        .button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.5);
+        }
+        
+        .button:hover::before {
+            left: 100%;
+        }
+        
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 20px;
+            background-color: var(--light);
+            animation: blink 1s infinite;
+            vertical-align: middle;
+            margin-left: 5px;
+        }
+        
+        .glitch-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent 0%, rgba(37, 99, 235, 0.1) 50%, transparent 100%);
+            z-index: -1;
+            animation: glitch-background 8s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+        
         .particle {
             position: absolute;
-            width: 8px;
-            height: 8px;
-            background-color: white;
+            background: white;
             border-radius: 50%;
-            opacity: 0.6;
-            animation: float 15s infinite linear;
+            opacity: 0;
+            animation: float 7s infinite;
         }
-        @keyframes float {
+        
+        @keyframes terminal-startup {
             0% {
-                transform: translateY(0) rotate(0deg);
-                opacity: 0.6;
+                opacity: 0;
+                transform: perspective(1000px) rotateX(10deg) translateY(20px);
             }
             100% {
-                transform: translateY(-100vh) rotate(360deg);
-                opacity: 0;
+                opacity: 1;
+                transform: perspective(1000px) rotateX(0deg) translateY(0);
             }
         }
-        @keyframes fadeIn {
-            from {
+        
+        @keyframes fade-in {
+            0% {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(10px);
             }
-            to {
+            100% {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
+        
+        @keyframes blink {
+            0%, 49% {
+                opacity: 1;
+            }
+            50%, 100% {
+                opacity: 0;
+            }
+        }
+        
+        @keyframes glitch {
+            0% {
+                text-shadow: 2px 0 0 rgba(255, 0, 0, 0.7), -2px 0 0 rgba(0, 255, 255, 0.7);
+                transform: translateX(-1px);
+            }
+            25% {
+                text-shadow: -2px 0 0 rgba(255, 0, 0, 0.7), 2px 0 0 rgba(0, 255, 255, 0.7);
+                transform: translateX(1px);
+            }
+            50% {
+                text-shadow: 2px 0 0 rgba(255, 0, 0, 0.7), 0 0 0 rgba(0, 255, 255, 0.7);
+                transform: translateY(-1px);
+            }
+            75% {
+                text-shadow: 0 0 0 rgba(255, 0, 0, 0.7), -2px 0 0 rgba(0, 255, 255, 0.7);
+                transform: translateY(1px);
+            }
+            100% {
+                text-shadow: -2px 0 0 rgba(255, 0, 0, 0.7), 2px 0 0 rgba(0, 255, 255, 0.7);
+                transform: translateX(-1px);
+            }
+        }
+        
+        @keyframes glitch-background {
+            0% {
+                opacity: 0;
+            }
+            25% {
+                opacity: 0.3;
+            }
+            30% {
+                opacity: 0;
+            }
+            35% {
+                opacity: 0.3;
+            }
+            70% {
+                opacity: 0;
+            }
+            85% {
+                opacity: 0.2;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+        
+        @keyframes float {
+            0% {
+                opacity: 0;
+                transform: translateY(0) rotate(0deg) scale(1);
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(-800px) rotate(360deg) scale(0);
+                opacity: 0;
+            }
+        }
+        
         @media (max-width: 768px) {
-            .container {
-                padding: 2rem;
-                margin: 0 15px;
+            .terminal {
+                width: 95%;
+                max-width: 600px;
             }
-            .error-code {
-                font-size: 5rem;
+            
+            .terminal-body {
+                padding: 20px;
+                min-height: 350px;
             }
-            h1 {
+            
+            .error-output {
                 font-size: 2.5rem;
             }
+        }
+        
+        @media (max-width: 480px) {
+            .terminal-body {
+                padding: 15px;
+                min-height: 300px;
+            }
+            
+            .error-output {
+                font-size: 2rem;
+            }
+            
+            .options {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .button {
+                width: 100%;
+                justify-content: center;
+                margin-right: 0;
+            }
+        }
+        
+        @font-face {
+            font-family: 'JetBrains Mono';
+            src: url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
         }
     </style>
 </head>
 <body>
-    <div class="particles" id="particles"></div>
-    <div class="container">
-        <div class="error-code">404</div>
-        <h1>Access Denied</h1>
-        <p>The page you are looking for does not exist or you don't have permission to access it.</p>
-        <p class="warning">Participants are not allowed to access this URL/endpoint.</p>
-        <p>Please return to the authorized area or contact an administrator if you believe this is an error.</p>
+    <div class="matrix-bg" id="matrix-canvas"></div>
+    <div class="glitch-overlay"></div>
+    
+    <div class="terminal" id="terminal">
+        <div class="terminal-header">
+            <div class="terminal-title">
+                <i class="fas fa-terminal"></i>
+                <span>hackcheck@bhavans ~ error-trace</span>
+            </div>
+            <div class="terminal-controls">
+                <div class="control minimize"></div>
+                <div class="control maximize"></div>
+                <div class="control close"></div>
+            </div>
+        </div>
+        
+        <div class="terminal-body">
+            <div class="command-line typed-text">
+                <span class="prompt">hackcheck@system:~$</span>
+                <span class="command" id="command1"></span>
+            </div>
+            
+            <div class="error-output">
+                Error 404: Resource Not Found
+            </div>
+            
+            <div class="error-details">
+                <p>The requested URL or endpoint could not be found on the Bhavans Hackathon server.</p>
+                <p>$ Participants are not authorized to access this resource.</p>
+                <p>$ Access attempt has been logged.</p>
+                <p>$ Bhavans Hackathon is powered by HackCheck platform.</p>
+            </div>
+            
+            <div class="command-line typed-text">
+                <span class="prompt">hackcheck@system:~$</span>
+                <span class="command" id="command2"></span>
+            </div>
+            
+            <div class="options">
+                <a href="https://hackcheck.leapcell.app/" class="button">
+                    <i class="fas fa-home"></i>
+                    Return to Dashboard
+                </a>
+            </div>
+            
+            <div class="credits">
+                <p>HackCheck - Bhavans Hackathon Platform</p>
+                <p>Backend & Page by <a href="https://github.com/ryash072007" target="_blank">Yash Raj <i class="fab fa-github"></i></a> | Frontend by <a href="https://github.com/Gopesh456" target="_blank">Gopesh Jana <i class="fab fa-github"></i></a></p>
+            </div>
+        </div>
     </div>
 
     <script>
-        // Create animated background particles
-        const particlesContainer = document.getElementById('particles');
-        const particleCount = 20;
-        
-        for (let i = 0; i < particleCount; i++) {
-            const particle = document.createElement('div');
-            particle.classList.add('particle');
+        // Terminal typing effect
+        function typeText(elementId, text, speed = 50) {
+            const element = document.getElementById(elementId);
+            let i = 0;
             
-            // Random positioning
-            particle.style.left = `${Math.random() * 100}%`;
-            particle.style.top = `${Math.random() * 100}%`;
+            function typing() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(typing, speed);
+                } else {
+                    element.innerHTML += '<span class="cursor"></span>';
+                    
+                    // If we're typing the first command, start the second after a delay
+                    if (elementId === "command1") {
+                        setTimeout(() => {
+                            document.getElementById("command2").innerHTML = "";
+                            typeText("command2", "suggest_recovery --redirect=dashboard", 50);
+                        }, 1000);
+                    }
+                }
+            }
             
-            // Random size
-            const size = Math.random() * 5 + 3;
-            particle.style.width = `${size}px`;
-            particle.style.height = `${size}px`;
-            
-            // Random animation duration
-            const duration = Math.random() * 10 + 5;
-            particle.style.animationDuration = `${duration}s`;
-            
-            // Random delay
-            const delay = Math.random() * 5;
-            particle.style.animationDelay = `${delay}s`;
-            
-            particlesContainer.appendChild(particle);
+            typing();
         }
+        
+        // Matrix background effect
+        function setupMatrixBackground() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            document.getElementById('matrix-canvas').appendChild(canvas);
+            
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            const characters = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            const columns = Math.floor(canvas.width / 20);
+            const drops = [];
+            
+            for (let i = 0; i < columns; i++) {
+                drops[i] = Math.random() * -100;
+            }
+            
+            const matrix = () => {
+                ctx.fillStyle = 'rgba(15, 23, 42, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.fillStyle = '#10b981';
+                ctx.font = '15px monospace';
+                
+                for (let i = 0; i < drops.length; i++) {
+                    const text = characters.charAt(Math.floor(Math.random() * characters.length));
+                    ctx.fillText(text, i * 20, drops[i] * 20);
+                    
+                    if (drops[i] * 20 > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    
+                    drops[i]++;
+                }
+            };
+            
+            setInterval(matrix, 50);
+        }
+        
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.body;
+            const particleCount = 30;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Random size between 2px and 6px
+                const size = Math.random() * 4 + 2;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                // Random position
+                particle.style.left = `${Math.random() * 100}vw`;
+                particle.style.top = `${Math.random() * 100}vh`;
+                
+                // Random animation duration and delay
+                const duration = Math.random() * 5 + 5;
+                const delay = Math.random() * 5;
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `${delay}s`;
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        // Terminal behavior
+        function setupTerminalInteractions() {
+            const terminal = document.getElementById('terminal');
+            const closeBtn = document.querySelector('.control.close');
+            
+            closeBtn.addEventListener('click', () => {
+                terminal.style.animation = 'fade-out 0.5s forwards';
+                setTimeout(() => {
+                    window.location.href = 'https://hackcheck.leapcell.app/';
+                }, 500);
+            });
+            
+            // Make report button functional
+            document.getElementById('report-btn').addEventListener('click', () => {
+                alert('Issue reported to system administrators.');
+            });
+        }
+        
+        // Glitch effect on error
+        function glitchEffect() {
+            const errorOutput = document.querySelector('.error-output');
+            
+            setInterval(() => {
+                if (Math.random() > 0.95) {
+                    errorOutput.style.opacity = '0.9';
+                    setTimeout(() => {
+                        errorOutput.style.opacity = '1';
+                    }, 100);
+                }
+                
+                if (Math.random() > 0.97) {
+                    errorOutput.style.transform = `translateX(${(Math.random() * 10) - 5}px)`;
+                    setTimeout(() => {
+                        errorOutput.style.transform = 'translateX(0)';
+                    }, 100);
+                }
+            }, 500);
+        }
+        
+        // Initialize everything
+        window.addEventListener('load', () => {
+            // Start typing the first command
+            typeText("command1", "locate_resource --path=" + window.location.pathname, 50);
+            
+            // Setup other visual effects
+            setupMatrixBackground();
+            createParticles();
+            setupTerminalInteractions();
+            glitchEffect();
+        });
+        
+        // Handle window resize for matrix background
+        window.addEventListener('resize', () => {
+            const canvas = document.querySelector('#matrix-canvas canvas');
+            if (canvas) {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+        });
     </script>
 </body>
 </html>
