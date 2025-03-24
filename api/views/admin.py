@@ -597,15 +597,7 @@ class ExportLeaderboard(APIView):
     Requires admin authentication.
     """
 
-    permission_classes = [IsAuthenticated]
-
     def post(self, request):
-        if not request.user.is_admin:
-            return Response(
-                {"error": "You don't have permission to perform this action."},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-
         hackathon_settings = HackathonSettings.get_instance()
         if not hackathon_settings.has_started:
             return Response(

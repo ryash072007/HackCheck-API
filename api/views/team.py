@@ -368,8 +368,7 @@ class ClearAllSharedCode(APIView):
 class ServeSharedCode(APIView):
     """
     Serve the shared code for a particular UUID.
-    This view allows authenticated team members to retrieve the shared code for a specific UUID.
-    The team ID and participant information are extracted from the JWT token in the request.
+    This view allows team members to retrieve the shared code for a specific UUID.
     Request body must include:
         - UUID: The UUID of the shared code
     Response: A response that acts as a file download for the shared code.
@@ -379,13 +378,7 @@ class ServeSharedCode(APIView):
         - 404 NOT FOUND: No shared code found
     """
 
-    permission_classes = [IsAuthenticated]
-
     def post(self, request, UUID):
-        participant_data = extract_info_from_jwt(request)
-        team_id = participant_data["participant"]["team_id"]
-        team = TeamProfile.objects.get(id=team_id)
-
         if not UUID:
             return Response(
                 {"error": "Missing 'UUID' in request body."},
@@ -393,10 +386,10 @@ class ServeSharedCode(APIView):
             )
 
         try:
-            shared_code = SharedCode.objects.get(file_uuid=UUID, team=team)
+            shared_code = SharedCode.objects.get(file_uuid=UUID)
         except SharedCode.DoesNotExist:
             return Response(
-                {"error": f"UUID does not exist or does not belong to this team."},
+                {"error": f"UUID does not exist."},
                 status=status.HTTP_404_NOT_FOUND,
             )
 
