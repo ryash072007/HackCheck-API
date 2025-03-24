@@ -102,9 +102,13 @@ WSGI_APPLICATION = "HackCheckAPI.wsgi.application"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "libsql.db.backends.sqlite3",
-        "NAME": "libsql://hackcheckapi-ryash072007.turso.io?authToken=eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3NDI4MjQwMTQsImlkIjoiNGEzYTRiNmUtOGI2Ny00NTU0LWE3NjQtNWViM2M0NmUyYTdkIiwicmlkIjoiOWY1YzU1ZjAtMjA0Yi00N2EyLTk0MmEtN2Q3NzE2MWU1NWY0In0.ScydrYVlRHqJeMAIV5KMzKYSZuwPo71jkud5nZZjwiJ07N-SRBN9l1HfjrX0IYDozm3m0GDU9ILcKlFis33-Aw"
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres.mkiytjlgzacbvrsjuclb',
+        'PASSWORD': 'yash2327raj',
+        'HOST': 'aws-0-us-east-1.pooler.supabase.com',
+        'PORT': '6543',
     }
 }
 
