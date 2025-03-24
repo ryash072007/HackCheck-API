@@ -597,7 +597,7 @@ class ExportLeaderboard(APIView):
     Requires admin authentication.
     """
 
-    def post(self, request):
+    def get(self, request):
         hackathon_settings = HackathonSettings.get_instance()
         if not hackathon_settings.has_started:
             return Response(

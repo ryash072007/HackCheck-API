@@ -378,7 +378,7 @@ class ServeSharedCode(APIView):
         - 404 NOT FOUND: No shared code found
     """
 
-    def post(self, request, UUID):
+    def get(self, request, UUID):
         if not UUID:
             return Response(
                 {"error": "Missing 'UUID' in request body."},

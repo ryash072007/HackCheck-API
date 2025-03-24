@@ -543,7 +543,7 @@ This document provides a comprehensive guide to all available endpoints in the H
 ### 3.8. Get Shared Code
 
 **Endpoint:** `/saved_codes/<str:uuid>/`  
-**Method:** POST  
+**Method:** GET  
 **Authentication:** None required  
 **Description:** Retrieves a previously saved Python code file for sharing between team members.
 
@@ -875,8 +875,8 @@ This document provides a comprehensive guide to all available endpoints in the H
 ### 5.6. Export Leaderboard
 
 **Endpoint:** `/export_leaderboard/`  
-**Method:** POST  
-**Authentication:** Admin JWT token  
+**Method:** GET  
+**Authentication:** None 
 **Description:** Exports the leaderboard data as CSV.
 
 **Request Body:** None required
