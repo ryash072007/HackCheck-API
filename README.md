@@ -542,8 +542,8 @@ This document provides a comprehensive guide to all available endpoints in the H
 
 ### 3.8. Get Shared Code
 
-**Endpoint:** `/saved_codes/<uuid>.py`  
-**Method:** GET  
+**Endpoint:** `/saved_codes/<str:uuid>/`  
+**Method:** POST  
 **Authentication:** None required  
 **Description:** Retrieves a previously saved Python code file for sharing between team members.
 
@@ -555,8 +555,7 @@ This document provides a comprehensive guide to all available endpoints in the H
 - Or a 404 page if the file doesn't exist
 
 **Notes:**
-- Files are served from the server's filesystem
-- Only .py files are allowed to be served through this endpoint
+- A steaming response is created mimicking as if the file is saved in the filesystem while its actually stored in the database.
 
 ### 3.9. Clear All Shared Code
 
