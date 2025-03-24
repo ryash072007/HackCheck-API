@@ -7,6 +7,7 @@ from django.db.models.signals import pre_delete
 from .user import TeamMember, TeamProfile
 import uuid
 
+
 class Question(models.Model):
     """
     Model to store questions for the quiz.
@@ -16,15 +17,12 @@ class Question(models.Model):
     number = models.IntegerField(unique=True, null=False, blank=False)
     description = models.TextField()
     difficulty = models.CharField(
-        max_length=10, choices=[("easy", "Easy"), ("medium", "Medium"), ("hard", "Hard")]
+        max_length=10,
+        choices=[("easy", "Easy"), ("medium", "Medium"), ("hard", "Hard")],
     )
 
-    samples = models.JSONField(
-        null=True, blank=True
-    )
-    tests = models.JSONField(
-        null=True, blank=True
-    )
+    samples = models.JSONField(null=True, blank=True)
+    tests = models.JSONField(null=True, blank=True)
 
     def __str__(self):
         return self.title
@@ -79,6 +77,7 @@ class Answer(models.Model):
     def __str__(self):
         return f"{self.question.number} - {self.team_member.team.team_name} - {self.time_submitted}"
 
+
 class SharedCode(models.Model):
     """
     Model to store shared code between team members.
@@ -98,20 +97,5 @@ class SharedCode(models.Model):
 
     file_uuid = models.UUIDField(default=uuid.uuid4, null=True, blank=True)
 
-    def save(self, *args, **kwargs):
-        with open(os.path.join(settings.MEDIA_ROOT, f"{self.file_uuid}.py"), "w") as f:
-            f.write(self.code)
-        super().save(*args, **kwargs)
-
     def __str__(self):
         return f"{self.team.team_name} - {self.question.title} - {self.time_shared}"
-
-@receiver(pre_delete, sender=SharedCode)
-def delete_shared_code_file(sender, instance, **kwargs):
-    """Delete the file when SharedCode instance is deleted in bulk operations."""
-    file_path = os.path.join(settings.MEDIA_ROOT, f"{instance.file_uuid}.py")
-    try:
-        if os.path.exists(file_path):
-            os.remove(file_path)
-    except OSError as e:
-        print(f"Error deleting file {file_path}: {e}")
