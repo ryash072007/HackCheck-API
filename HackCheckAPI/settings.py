@@ -164,6 +164,6 @@ REST_FRAMEWORK = {
     ),
 }
 
-print(f"{os.path.join("/tmp", "db.sqlite3")}, {os.path.exists(os.path.join('/tmp', 'db.sqlite3'))}")
+print(f"{os.path.join('/tmp', 'db.sqlite3')}, {os.path.exists(os.path.join('/tmp', 'db.sqlite3'))}")
 # Apply all migrations
 call_command("migrate")
