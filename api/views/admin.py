@@ -13,6 +13,7 @@ from db.models import (
     HackathonSettings,
 )
 from db.models.question import SharedCode
+from django.http import StreamingHttpResponse
 
 
 class ResetHackathonDatabase(APIView):
@@ -613,21 +614,20 @@ class ExportLeaderboard(APIView):
             )
 
         teams = TeamProfile.objects.all().order_by("-score")
-        team_data = [
-            {
-                "Team Name": team.team_name,
-                "Score": team.score,
-            }
-            for team in teams
-        ]
-
-        response = Response(team_data, status=status.HTTP_200_OK)
-
-        with open("leaderboard.csv", "w") as f:
-            f.write("Team Name,Score\n")
-            for team in team_data:
-                f.write(f"{team['Team Name']},{team['Score']}\n")
-
+        
+        # Define a generator function to yield CSV content in chunks
+        def generate_csv():
+            yield "Team Name,Score\r\n"
+            
+            for team in teams:
+                yield f"{team.team_name},{team.score}\r\n"
+        
+        response = StreamingHttpResponse(
+            generate_csv(),
+            content_type="text/csv"
+        )
+        response["Content-Disposition"] = 'attachment; filename="leaderboard.csv"'
+        
         return response
 
 
