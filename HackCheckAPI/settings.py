@@ -15,7 +15,6 @@ import os
 from pathlib import Path
 from os import environ
 import socket
-from django.core.management import call_command
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -163,7 +162,3 @@ REST_FRAMEWORK = {
         "api.authentication.TeamParticipantAuthentication",
     ),
 }
-
-print(f"{os.path.join('/tmp', 'db.sqlite3')}, {os.path.exists(os.path.join('/tmp', 'db.sqlite3'))}")
-# Apply all migrations
-call_command("migrate")
