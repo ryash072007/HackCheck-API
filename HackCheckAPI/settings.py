@@ -30,7 +30,7 @@ PORT = 8000
 SECRET_KEY = "django-insecure-!$dd+3iyptffqf5mp((rnu@rn=x)y(y1z5u8-lhl_&!pqzxq+c"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 URL = f"http://{IP}:{PORT}" #"https://whippet-guided-adequately.ngrok-free.app" # Set with None if not using ngrok
 
