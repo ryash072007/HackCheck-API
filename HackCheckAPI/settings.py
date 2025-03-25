@@ -32,7 +32,7 @@ SECRET_KEY = "django-insecure-!$dd+3iyptffqf5mp((rnu@rn=x)y(y1z5u8-lhl_&!pqzxq+c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-URL = "https://ackheck--ryash0720072806-0dcew4r3.leapcell.dev" #"https://whippet-guided-adequately.ngrok-free.app" # Set with None if not using ngrok
+URL = f"http://{IP}:{PORT}" #"https://whippet-guided-adequately.ngrok-free.app" # Set with None if not using ngrok
 
 # Application definition
 
@@ -105,11 +105,10 @@ WSGI_APPLICATION = "HackCheckAPI.wsgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres.mkiytjlgzacbvrsjuclb',
-        'PASSWORD': 'yash2327raj',
-        'HOST': 'aws-0-us-east-1.pooler.supabase.com',
-        'PORT': '6543',
+        'NAME': 'HackCheck',
+        'USER': 'postgres',
+        'PASSWORD': 'root',
+        'HOST': 'localhost',
     }
 }
 

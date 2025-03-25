@@ -32,7 +32,7 @@ jwt_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIi
 # Execute requests concurrently
 with concurrent.futures.ThreadPoolExecutor(max_workers=50) as executor:
     futures = [
-        executor.submit(call_api, i, jwt_token=jwt_token, endpoint="login/",) for i in range(num_requests)
+        executor.submit(call_api, i, endpoint="login/") for i in range(num_requests)
     ]
     results = [future.result() for future in concurrent.futures.as_completed(futures)]
 
