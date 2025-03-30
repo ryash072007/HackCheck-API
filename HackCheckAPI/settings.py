@@ -102,10 +102,13 @@ WSGI_APPLICATION = "HackCheckAPI.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# PostgreSQL Installation: https://docs.fedoraproject.org/en-US/quick-docs/postgresql/
+# Preferrably run on linux to use gunicorn and other goodies. waitress-serve on windows
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'HackCheck',
+        'NAME': 'hackcheck',
         'USER': 'postgres',
         'PASSWORD': 'root',
         'HOST': 'localhost',

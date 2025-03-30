@@ -5,7 +5,7 @@ import concurrent.futures
 def call_api(id, endpoint="login/", jwt_token=None, data=None):
     if data is None:
         data = {
-            "team_name": "Bhavans 03",
+            "team_name": "Bhavans",
             "participant_name": "Yash",
             "password": "Test1234",
         }
@@ -30,7 +30,7 @@ num_requests = 50
 jwt_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQyNzQ3NzI4LCJpYXQiOjE3NDI3MzY5MjgsImp0aSI6ImQ3Y2FmMmE1NzIwOTQ0MDBiZGEyOTBlYjZlZjkzMzU4IiwidXNlcl9pZCI6NiwidGVhbV9pZCI6MywidGVhbV9uYW1lIjoiQmhhdmFucyAwMyIsInBhcnRpY2lwYW50X2lkIjo3LCJwYXJ0aWNpcGFudF9uYW1lIjoiWWFzaCJ9.2UMFLKldMl-t4jGqR5D69HbsDxVfIRMdGBVS7D2rEhE"  # Replace with your actual JWT token when needed
 
 # Execute requests concurrently
-with concurrent.futures.ThreadPoolExecutor(max_workers=50) as executor:
+with concurrent.futures.ThreadPoolExecutor(max_workers=25) as executor:
     futures = [
         executor.submit(call_api, i, endpoint="login/") for i in range(num_requests)
     ]
