@@ -580,6 +580,35 @@ This document provides a comprehensive guide to all available endpoints in the H
 **Error Responses:**
 - `401 Unauthorized` - Not authenticated or invalid token
 
+### 3.10 Log Activity
+
+**Endpoint:** `/log_activity/`  
+**Method:** POST  
+**Authentication:** Team JWT token  
+**Description:** Logs malicious activity of a participant.
+
+**Request Body:**
+```json
+{
+  "question_number": 1,
+  "activity_type": "Tab Switch",
+  "details": "Participant switched to another tab despite lockdown."
+}
+```
+
+**Response:**
+```json
+{
+  "message": "Activity logged successfully."
+}
+```
+
+**Error Responses:**
+- `400 Bad Request` - Question number is required to log activity
+- `400 Bad Request` - Activity type is required to log activity
+- `400 Bad Request` - Details are required to log activity
+- `401 Unauthorized` - Not authenticated or invalid token
+
 ---
 
 ## 4. Hackathon Administration
