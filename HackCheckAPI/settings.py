@@ -108,7 +108,7 @@ WSGI_APPLICATION = "HackCheckAPI.wsgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'hackcheck',
+        'NAME': 'HackCheck',
         'USER': 'postgres',
         'PASSWORD': 'root',
         'HOST': 'localhost',
