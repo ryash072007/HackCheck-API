@@ -1,35 +1,34 @@
-# Use official Python image
-FROM python:3.11-slim
+# Use the official PostgreSQL image as the base
+FROM postgres:latest
 
-# Install PostgreSQL and system dependencies
-RUN apt-get update \
-    && apt-get install -y postgresql postgresql-contrib gcc libpq-dev \
-    && apt-get clean \
+# Install Python and pip
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
-# Set environment variables for PostgreSQL
-ENV POSTGRES_DB=hackcheck \
-    POSTGRES_USER=postgres \
-    POSTGRES_PASSWORD=root \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
-
-# Set workdir
+# Set working directory
 WORKDIR /app
 
-# Copy requirements and install
+# Copy requirements file and install Python dependencies
 COPY requirements.txt .
-RUN pip install --upgrade pip && pip install -r requirements.txt
+RUN pip3 install --no-cache-dir -r requirements.txt
 
-# Copy project files
+# Copy the rest of your application
 COPY . .
 
-# Expose port
+# Make sure the entrypoint script is executable
+RUN chmod +x docker-entrypoint.sh
+
+# Set the entrypoint to use the PostgreSQL entrypoint script
+ENTRYPOINT ["./docker-entrypoint.sh"]
+
+# Default command when container starts
+CMD ["postgres"]
+
+# Expose port 8000 for Gunicorn
 EXPOSE 8000
-EXPOSE 5433
 
-# Entrypoint script
-COPY docker-entrypoint.sh /docker-entrypoint.sh
-RUN chmod +x /docker-entrypoint.sh
-
-ENTRYPOINT ["/docker-entrypoint.sh"]
+# Set environment variables for PostgreSQL
+ENV POSTGRES_PASSWORD=root
+ENV POSTGRES_DB=hackcheck
