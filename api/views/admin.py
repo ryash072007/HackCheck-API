@@ -477,21 +477,25 @@ class AdminDashboard(APIView):
         # Get current time for calculating time remaining
         current_time = datetime.now()
         time_started = hackathon_settings.time_started
-        
-        # Normalize timezone if present to prevent timezone-related calculation issues
-        if time_started.tzinfo is not None:
-            time_started = time_started.replace(tzinfo=None)
-            
-        # If hackathon is paused, use the pause time instead of current time
-        if hackathon_settings.is_paused:
-            current_time = hackathon_settings.time_paused
-            if current_time.tzinfo is not None:
-                current_time = current_time.replace(tzinfo=None)
-            
-        # Calculate time left: hackathon duration minus elapsed time (excluding paused periods)
-        time_left = hackathon_settings.duration - (
-            current_time - time_started - hackathon_settings.time_spent_paused
-        )
+        time_left = None
+
+        if time_started is None:
+            time_left = hackathon_settings.duration
+        else:
+            # Normalize timezone if present to prevent timezone-related calculation issues
+            if time_started.tzinfo is not None:
+                time_started = time_started.replace(tzinfo=None)
+                
+            # If hackathon is paused, use the pause time instead of current time
+            if hackathon_settings.is_paused:
+                current_time = hackathon_settings.time_paused
+                if current_time.tzinfo is not None:
+                    current_time = current_time.replace(tzinfo=None)
+                
+            # Calculate time left: hackathon duration minus elapsed time (excluding paused periods)
+            time_left = hackathon_settings.duration - (
+                current_time - time_started - hackathon_settings.time_spent_paused
+            )
         # Convert to seconds for client-side use
         time_left_seconds = time_left.total_seconds()
 
