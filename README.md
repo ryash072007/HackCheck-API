@@ -7,6 +7,14 @@
 
 ![HackCheck Database Visualiser](<GitHub Files/Database Visualiser.png>)
 
+# How to setup, install, and use
+
+1. Install postgres-sql onto port 5432 and ensure that its service runs
+2. Clone this repository (main branch for windows | self-host for linux)
+3. On windows, run the setup_backend.bat file. On linux, just install the requirements file and makemigrations and migrate.
+4. On windows, open the terminal (powershell) in the cwd of this repo and run start_backend.ps1 -> `.\start_backend.ps1`. You might have to enable script running in your execution policy. On linux, just use gunicorn.
+5. To stop the server, press `ctrl + c` in the caddy pop-up window (the other terminal window that would have opened after running the backend), and wait for the server to stop.
+
 # HackCheck API Documentation
 
 This document provides a comprehensive guide to all available endpoints in the HackCheck-API project. For each endpoint, you'll find information about required authentication, input parameters, and expected responses.
