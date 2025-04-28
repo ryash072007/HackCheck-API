@@ -16,3 +16,4 @@ yarg==0.1.10
 psycopg2-binary
 whitenoise
 waitress
+gunicorn

@@ -67,8 +67,6 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 ALLOWED_HOSTS = ["*"]
 
-CSRF_TRUSTED_ORIGINS = ["https://whippet-guided-adequately.ngrok-free.app"]
-
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(
         minutes=int(environ.get("HACKATHON_DURATION", 300))
