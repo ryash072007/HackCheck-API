@@ -26,6 +26,7 @@ COPY . .
 
 # Expose port
 EXPOSE 8000
+EXPOSE 5433
 
 # Entrypoint script
 COPY docker-entrypoint.sh /docker-entrypoint.sh
