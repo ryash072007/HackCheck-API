@@ -20,7 +20,7 @@ foreach ($interface in $interfaces) {
 if ($ip) {
     $ip = $ip + ":80"
     Write-Host "Ignore the above error."
-    Write-Host "IP Address with port 80: $ip" -ForegroundColor Magenta -BackgroundColor Blue
+    Write-Host "IP Address with port 80: http://$ip/" -ForegroundColor Magenta -BackgroundColor Blue
 } else {
     Write-Host "No IPv4 address found for Ethernet or WiFi." -ForegroundColor Red
 }
