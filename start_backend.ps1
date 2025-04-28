@@ -4,6 +4,28 @@ $workers = Read-Host "Enter number of workers to start (e.g., 4)"
 # Ask user for number of threads
 $threads = Read-Host "Enter number of threads per worker (e.g., 2)"
 
+$interfaces = @("Ethernet", "WiFi")
+$ip = $null
+
+# Loop through each interface name
+foreach ($interface in $interfaces) {
+    # Get the IP address for the current interface alias
+    $ip = (Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias $interface | Select-Object -First 1).IPAddress
+    if ($ip) {
+        break
+    }
+}
+
+# If an IP address was found, append port 80 and output it
+if ($ip) {
+    $ip = $ip + ":80"
+    Write-Host "Ignore the above error."
+    Write-Host "IP Address with port 80: $ip" -ForegroundColor Magenta -BackgroundColor Blue
+} else {
+    Write-Host "No IPv4 address found for Ethernet or WiFi." -ForegroundColor Red
+}
+
+
 # Initialize
 $port = 8000
 $servers = @()
