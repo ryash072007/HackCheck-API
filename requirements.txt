@@ -15,5 +15,3 @@ urllib3==2.3.0
 yarg==0.1.10
 psycopg2-binary
 whitenoise
-waitress
-gunicorn
