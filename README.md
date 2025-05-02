@@ -164,6 +164,24 @@ gunicorn --bind 0.0.0.0:8000 --workers 4 --threads 2 HackCheckAPI.wsgi:applicati
 
 When you see lines like `Booting worker with pid…`, your API backend server is live.
 
+#### Restarting the Server
+
+If you need to restart the server later, follow these steps:
+
+```bash
+# 1) Go to your home folder
+cd ~
+
+# 2) Reactivate the virtual environment
+source hackcheck-venv/bin/activate
+
+# 3) Navigate to the HackCheck-API folder
+cd HackCheck-API
+
+# 4) Start the server | modify workers and threads as needed
+gunicorn --bind 0.0.0.0:8000 --workers 8 --threads 3 HackCheckAPI.wsgi:application
+```
+
 ----------
 
 ## ✅ Final Check
@@ -181,3 +199,27 @@ When you see lines like `Booting worker with pid…`, your API backend server is
     http://<Your-PC-IP>:8000/
     
     ```
+
+### Troubleshooting
+
+If you cannot access the website from the host machine IP, follow these steps:
+
+1. **Open WSL Settings**  
+   - Click **Start**, type `WSL settings`, and open the **Windows Subsystem for Linux settings**.
+
+2. **Change Networking Mode**  
+   - Go to the **Networking** section.
+   - Change the **Networking mode** to **Mirrored**.
+
+3. **Enable Host Address Loopback**  
+   - Ensure the **Enable host address loopback** option is checked.
+
+4. **Restart WSL**  
+   - Open PowerShell as Administrator and run:
+     ```powershell
+     wsl --shutdown
+     ```
+   - Then restart WSL by launching your Ubuntu instance again.
+
+5. **Retry Accessing the Website**  
+   - Open the browser and try visiting `http://<Your-PC-IP>:8000/` again.
