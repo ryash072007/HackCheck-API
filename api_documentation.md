@@ -921,6 +921,25 @@ This document provides a comprehensive guide to all available endpoints in the H
 **Error Responses:**
 - `403 Forbidden` - Not an admin user
 
+### 5.7. Check Admin Status
+
+**Endpoint:** `/is_admin/`  
+**Method:** POST  
+**Authentication:** Any valid JWT token  
+**Description:** Checks if the authenticated user is an admin.
+
+**Request Body:** None required
+
+**Response:**
+```json
+{
+  "is_admin": true
+}
+```
+
+**Error Responses:**
+- `401 Unauthorized` - Authentication credentials were not provided or are invalid
+
 ---
 
 ## 6. Utilities
