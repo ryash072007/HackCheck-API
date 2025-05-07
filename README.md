@@ -1,3 +1,11 @@
+# ...existing code...
+
+## API Documentation
+
+For a complete list of all API endpoints, request/response formats, and error codes, see the [API Documentation](./api_documentation.md).
+
+# ...existing code...
+
 ## PART 1: Open the Firewall (Windows CMD)
 
 1.  **Open Command Prompt as Administrator**
