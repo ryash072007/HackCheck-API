@@ -21,7 +21,9 @@ class HackathonSettings(models.Model):
     score_decrement_per_interval = models.IntegerField(default=10)
     score_decrement_interval = models.DurationField(default=timedelta(minutes=10))
 
-    max_score = models.IntegerField(default=300)
+    easy_max_score = models.IntegerField(default=200)
+    medium_max_score = models.IntegerField(default=300)
+    hard_max_score = models.IntegerField(default=400)
 
     class Meta:
         verbose_name_plural = "Hackathon Settings"

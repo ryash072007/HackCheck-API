@@ -529,7 +529,9 @@ class GetScoreSettings(APIView):
 
         hackathon_settings = HackathonSettings.get_instance()
         score_settings = {
-            "max_score": hackathon_settings.max_score,
+            "easy_max_score": hackathon_settings.easy_max_score,
+            "medium_max_score": hackathon_settings.medium_max_score,
+            "hard_max_score": hackathon_settings.hard_max_score,
             "score_decrement_interval_seconds": hackathon_settings.score_decrement_interval.total_seconds(),
             "score_decrement_per_interval": hackathon_settings.score_decrement_per_interval,
         }
@@ -553,28 +555,38 @@ class UpdateScoreSettings(APIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        max_score = request.data.get("max_score")
+        easy_max_score = request.data.get("easy_max_score")
+        medium_max_score = request.data.get("medium_max_score")
+        hard_max_score = request.data.get("hard_max_score")
         score_decrement_interval_seconds = request.data.get(
             "score_decrement_interval_seconds"
         )
         score_decrement_per_interval = request.data.get("score_decrement_per_interval")
 
         if (
-            not max_score
+            not easy_max_score
+            and not medium_max_score
+            and not hard_max_score
             and not score_decrement_interval_seconds
             and not score_decrement_per_interval
         ):
             return Response(
                 {
-                    "error": "Provide at least one of 'max_score', 'score_decrement_interval_seconds', or 'score_decrement_per_interval'."
+                    "error": "Provide at least one of 'easy_max_score', 'medium_max_score', 'hard_max_score', 'score_decrement_interval_seconds', or 'score_decrement_per_interval'."
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         hackathon_settings = HackathonSettings.get_instance()
 
-        if max_score:
-            hackathon_settings.max_score = max_score
+        if easy_max_score:
+            hackathon_settings.easy_max_score = easy_max_score
+        
+        if medium_max_score:
+            hackathon_settings.medium_max_score = medium_max_score
+        
+        if hard_max_score:
+            hackathon_settings.hard_max_score = hard_max_score
 
         if score_decrement_interval_seconds:
             hackathon_settings.score_decrement_interval = timedelta(
