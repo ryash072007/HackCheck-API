@@ -40,7 +40,7 @@ class ResetHackathonDatabase(APIView):
                 # Delete all answers first (to respect foreign key constraints)
                 answer_count = Answer.objects.all().count()
                 Answer.objects.all().delete()
-                
+
                 # Delete all saved code
                 saved_code_count = SharedCode.objects.all().count()
                 SharedCode.objects.all().delete()
@@ -193,13 +193,13 @@ class AddQuestion(APIView):
                 {"error": "Samples and tests must be dictionaries."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        
+
         if not ("input" in samples and "output" in samples):
             return Response(
                 {"error": "Samples must have 'input' and 'output' keys."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        
+
         if not ("input" in tests and "output" in tests):
             return Response(
                 {"error": "Tests must have 'input' and 'output' keys."},
@@ -299,7 +299,7 @@ class RemoveQuestion(APIView):
             question.delete()
 
             with transaction.atomic():
-                remaining_questions = Question.objects.all().order_by('number')
+                remaining_questions = Question.objects.all().order_by("number")
                 for i, q in enumerate(remaining_questions, 1):
                     if q.number != i:
                         q.number = i
@@ -396,7 +396,7 @@ class UpdateQuestion(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             question.tests = tests
-        
+
         if difficulty is not None:
             if difficulty not in ["easy", "medium", "hard"]:
                 return Response(
@@ -485,13 +485,13 @@ class AdminDashboard(APIView):
             # Normalize timezone if present to prevent timezone-related calculation issues
             if time_started.tzinfo is not None:
                 time_started = time_started.replace(tzinfo=None)
-                
+
             # If hackathon is paused, use the pause time instead of current time
             if hackathon_settings.is_paused:
                 current_time = hackathon_settings.time_paused
                 if current_time.tzinfo is not None:
                     current_time = current_time.replace(tzinfo=None)
-                
+
             # Calculate time left: hackathon duration minus elapsed time (excluding paused periods)
             time_left = hackathon_settings.duration - (
                 current_time - time_started - hackathon_settings.time_spent_paused
@@ -529,7 +529,9 @@ class GetScoreSettings(APIView):
 
         hackathon_settings = HackathonSettings.get_instance()
         score_settings = {
-            "max_score": hackathon_settings.max_score,
+            "easy_max_score": hackathon_settings.easy_max_score,
+            "medium_max_score": hackathon_settings.medium_max_score,
+            "hard_max_score": hackathon_settings.hard_max_score,
             "score_decrement_interval_seconds": hackathon_settings.score_decrement_interval.total_seconds(),
             "score_decrement_per_interval": hackathon_settings.score_decrement_per_interval,
         }
@@ -553,28 +555,38 @@ class UpdateScoreSettings(APIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        max_score = request.data.get("max_score")
+        easy_max_score = request.data.get("easy_max_score")
+        medium_max_score = request.data.get("medium_max_score")
+        hard_max_score = request.data.get("hard_max_score")
         score_decrement_interval_seconds = request.data.get(
             "score_decrement_interval_seconds"
         )
         score_decrement_per_interval = request.data.get("score_decrement_per_interval")
 
         if (
-            not max_score
+            not easy_max_score
+            and not medium_max_score
+            and not hard_max_score
             and not score_decrement_interval_seconds
             and not score_decrement_per_interval
         ):
             return Response(
                 {
-                    "error": "Provide at least one of 'max_score', 'score_decrement_interval_seconds', or 'score_decrement_per_interval'."
+                    "error": "Provide at least one of 'easy_max_score', 'medium_max_score', 'hard_max_score', 'score_decrement_interval_seconds', or 'score_decrement_per_interval'."
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         hackathon_settings = HackathonSettings.get_instance()
 
-        if max_score:
-            hackathon_settings.max_score = max_score
+        if easy_max_score:
+            hackathon_settings.easy_max_score = easy_max_score
+
+        if medium_max_score:
+            hackathon_settings.medium_max_score = medium_max_score
+
+        if hard_max_score:
+            hackathon_settings.hard_max_score = hard_max_score
 
         if score_decrement_interval_seconds:
             hackathon_settings.score_decrement_interval = timedelta(
@@ -610,20 +622,17 @@ class ExportLeaderboard(APIView):
             )
 
         teams = TeamProfile.objects.all().order_by("-score")
-        
+
         # Define a generator function to yield CSV content in chunks
         def generate_csv():
             yield "Team Name,Score\r\n"
-            
+
             for team in teams:
                 yield f"{team.team_name},{team.score}\r\n"
-        
-        response = StreamingHttpResponse(
-            generate_csv(),
-            content_type="text/csv"
-        )
+
+        response = StreamingHttpResponse(generate_csv(), content_type="text/csv")
         response["Content-Disposition"] = 'attachment; filename="leaderboard.csv"'
-        
+
         return response
 
 
@@ -658,5 +667,21 @@ class ResetCurrentHackathon(APIView):
 
         return Response(
             {"message": "Current hackathon successfully reset."},
+            status=status.HTTP_200_OK,
+        )
+
+
+class IsAdmin(APIView):
+    """
+    Admin endpoint to check if the user is an admin.
+
+    Requires authentication.
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        return Response(
+            {"is_admin": request.user.is_admin},
             status=status.HTTP_200_OK,
         )
