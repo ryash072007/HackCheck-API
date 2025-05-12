@@ -65,6 +65,8 @@ MIDDLEWARE = [
 
 CORS_ORIGIN_ALLOW_ALL = True
 
+CSRF_TRUSTED_ORIGINS = ["http://*", "https://*"]
+
 ALLOWED_HOSTS = ["*"]
 
 SIMPLE_JWT = {
