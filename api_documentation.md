@@ -982,7 +982,7 @@ python manage.py createsuperuser
 
 Then, follow the step below and sign into the admin portal. Then go to accounts -> open your own account -> set yourself as admin by checking is_admin to true and saving.
 
-### 7.2 Open the django admin portal: http://localhost:8000/admin
+### 7.2 Open the django admin portal: http://localhost:8000/api_admin/
 
 When running the project during the actual hackathon (or when the frontend and backend are ran on different devices), you will have to replace the localhost part with the ipv4 address of that device on that network
 
