@@ -12,6 +12,7 @@ from api.views import (
     UpdateScoreSettings,
     ExportLeaderboard,
     ResetCurrentHackathon,
+    IsAdmin
 )
 
 urlpatterns = [
@@ -27,4 +28,5 @@ urlpatterns = [
     path("update_score_settings/", UpdateScoreSettings.as_view()),
     path("export_leaderboard/", ExportLeaderboard.as_view()),
     path("reset_hackathon/", ResetCurrentHackathon.as_view()),
+    path("is_admin/", IsAdmin.as_view()),
 ]

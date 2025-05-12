@@ -100,14 +100,23 @@ class SubmitAnswer(APIView):
             # Calculate the time spent in the hackathon
             # and the score based on the time spent
             hackathon_time_spent = time_submitted - time_started - hackathon_settings.time_spent_paused
-            print("IGNORE THE ABOVE WARNING: EVERYTHING IS FINE")
+            print("IGNORE THE ABOVE WARNING (if any): EVERYTHING IS FINE")
             intervals_done = (
                 hackathon_time_spent // hackathon_settings.score_decrement_interval
             )
             score_decrement = (
                 hackathon_settings.score_decrement_per_interval * intervals_done
             )
-            score = hackathon_settings.max_score - score_decrement
+
+            max_score = None
+            if question.difficulty == "easy":
+                max_score = hackathon_settings.easy_max_score
+            elif question.difficulty == "medium":
+                max_score = hackathon_settings.medium_max_score
+            elif question.difficulty == "hard":
+                max_score = hackathon_settings.hard_max_score
+
+            score = max_score - score_decrement
 
             answer.score = score
             answer.save()
