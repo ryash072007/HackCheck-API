@@ -109,10 +109,11 @@ WSGI_APPLICATION = "HackCheckAPI.wsgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'hackcheck',
-        'USER': 'postgres',
-        'PASSWORD': '',
-        'HOST': '',
+        'NAME': 'HackCheckAPI',
+        'USER': 'postgres.kigznvqivhtwrizabsrn',
+        'PASSWORD': 'Yash2327raj',
+        'HOST': 'aws-0-us-east-1.pooler.supabase.com',
+        'PORT': '6543',
     }
 }
 
