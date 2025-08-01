@@ -5,7 +5,7 @@ from rest_framework import status
 from api.helper import extract_info_from_jwt
 from db.models.question import Answer, Question
 from db.models.user import TeamMember, TeamProfile
-from db.models import HackathonSettings
+from db.models import HackathonSettings, ParticipantActivity
 from datetime import datetime
 
 
@@ -100,14 +100,23 @@ class SubmitAnswer(APIView):
             # Calculate the time spent in the hackathon
             # and the score based on the time spent
             hackathon_time_spent = time_submitted - time_started - hackathon_settings.time_spent_paused
-            print("IGNORE THE ABOVE WARNING: EVERYTHING IS FINE")
+            print("IGNORE THE ABOVE WARNING (if any): EVERYTHING IS FINE")
             intervals_done = (
                 hackathon_time_spent // hackathon_settings.score_decrement_interval
             )
             score_decrement = (
                 hackathon_settings.score_decrement_per_interval * intervals_done
             )
-            score = hackathon_settings.max_score - score_decrement
+
+            max_score = None
+            if question.difficulty == "easy":
+                max_score = hackathon_settings.easy_max_score
+            elif question.difficulty == "medium":
+                max_score = hackathon_settings.medium_max_score
+            elif question.difficulty == "hard":
+                max_score = hackathon_settings.hard_max_score
+
+            score = max_score - score_decrement
 
             answer.score = score
             answer.save()
@@ -139,5 +148,59 @@ class CheckHackathonStatus(APIView):
                 "has_ended": hackathon_settings.has_ended,
                 "is_paused": hackathon_settings.is_paused,
             },
+            status=status.HTTP_200_OK,
+        )
+
+class LogActivity(APIView):
+    """
+    Log activity for a participant.
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        """
+        Log activity for a participant.
+        """
+
+        request_data = extract_info_from_jwt(request)
+        team_id = request_data["participant"]["team_id"]
+        team = TeamProfile.objects.get(id=team_id)
+
+        team_member = TeamMember.objects.get(id=request_data["participant"]["id"])
+
+        question_number = request.data.get("question_number", None)
+        activity_type = request.data.get("activity_type", None)
+        details = request.data.get("details", None)
+
+        if not question_number:
+            return Response(
+                {"error": "Question number is required to log activity."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if not activity_type:
+            return Response(
+                {"error": "Activity type is required to log activity."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if not details:
+            return Response(
+                {"error": "Details are required to log activity."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        question = Question.objects.get(number=question_number)
+
+        activity = ParticipantActivity.objects.create(
+            question=question,
+            team_member=team_member,
+            team=team,
+            activity_type=activity_type,
+            details=details,
+            timestamp=datetime.now(),
+        )
+
+        return Response(
+            {"message": "Activity logged successfully."},
             status=status.HTTP_200_OK,
         )

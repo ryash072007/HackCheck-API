@@ -1,6 +1,8 @@
 from datetime import timedelta
 from django.core.exceptions import ValidationError
 from django.db import models
+from .question import Question
+from .user import TeamMember, TeamProfile
 
 
 class HackathonSettings(models.Model):
@@ -19,7 +21,9 @@ class HackathonSettings(models.Model):
     score_decrement_per_interval = models.IntegerField(default=10)
     score_decrement_interval = models.DurationField(default=timedelta(minutes=10))
 
-    max_score = models.IntegerField(default=300)
+    easy_max_score = models.IntegerField(default=200)
+    medium_max_score = models.IntegerField(default=300)
+    hard_max_score = models.IntegerField(default=400)
 
     class Meta:
         verbose_name_plural = "Hackathon Settings"
@@ -36,3 +40,22 @@ class HackathonSettings(models.Model):
 
     def __str__(self):
         return f"Max Team Size: {self.max_team_size}, Duration: {self.duration}"
+
+
+class ParticipantActivity(models.Model):
+    question = models.ForeignKey(
+        Question, on_delete=models.CASCADE, related_name="participant_activities"
+    )
+    team_member = models.ForeignKey(
+        TeamMember, on_delete=models.CASCADE, related_name="participant_activities"
+    )
+    team = models.ForeignKey(
+        TeamProfile, on_delete=models.CASCADE, related_name="participant_activities"
+    )
+    activity_type = models.CharField(max_length=256)
+    details = models.TextField()
+
+    timestamp = models.DateTimeField()
+
+    def __str__(self):
+        return f"{self.team_member} - {self.activity_type} - {self.timestamp}"

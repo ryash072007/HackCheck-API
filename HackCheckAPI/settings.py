@@ -20,7 +20,8 @@ import socket
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-IP = socket.gethostbyname(socket.gethostname())
+# Modified for gunicorn
+IP = "" # Set to IP address of the windows PC / laptop running the server.
 PORT = 8000
 
 # Quick-start development settings - unsuitable for production
@@ -30,9 +31,9 @@ PORT = 8000
 SECRET_KEY = "django-insecure-!$dd+3iyptffqf5mp((rnu@rn=x)y(y1z5u8-lhl_&!pqzxq+c"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-URL = "https://ackheck--ryash0720072806-0dcew4r3.leapcell.dev" #"https://whippet-guided-adequately.ngrok-free.app" # Set with None if not using ngrok
+URL = f"http://{IP}:{PORT}" #"https://whippet-guided-adequately.ngrok-free.app" # Set with None if not using ngrok
 
 # Application definition
 
@@ -64,9 +65,9 @@ MIDDLEWARE = [
 
 CORS_ORIGIN_ALLOW_ALL = True
 
-ALLOWED_HOSTS = ["*"]
+CSRF_TRUSTED_ORIGINS = ["http://*", "https://*"]
 
-CSRF_TRUSTED_ORIGINS = ["https://whippet-guided-adequately.ngrok-free.app"]
+ALLOWED_HOSTS = ["*"]
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(
@@ -102,14 +103,16 @@ WSGI_APPLICATION = "HackCheckAPI.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# PostgreSQL Installation: https://docs.fedoraproject.org/en-US/quick-docs/postgresql/
+# Preferrably run on linux to use gunicorn and other goodies. waitress-serve on windows
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres.mkiytjlgzacbvrsjuclb',
-        'PASSWORD': 'yash2327raj',
-        'HOST': 'aws-0-us-east-1.pooler.supabase.com',
-        'PORT': '6543',
+        'NAME': 'hackcheck',
+        'USER': 'postgres',
+        'PASSWORD': '',
+        'HOST': '',
     }
 }
 

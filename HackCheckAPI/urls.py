@@ -25,7 +25,7 @@ from .views import custom_media_serve
 
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
+    path("api_admin/", admin.site.urls),
     path("", include("api.urls")),
     re_path(r".*", custom_404_view),
 ]
